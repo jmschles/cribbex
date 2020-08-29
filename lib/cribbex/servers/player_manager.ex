@@ -10,7 +10,7 @@ defmodule Cribbex.PlayerManager do
   end
 
   def add_player(name) do
-    GenServer.cast(__MODULE__, {:add_player, name})
+    GenServer.call(__MODULE__, {:add_player, name})
   end
 
   # hopefully we can invoke this on socket disconnect
@@ -28,12 +28,12 @@ defmodule Cribbex.PlayerManager do
     {:reply, players, players}
   end
 
-  @impl true
-  def handle_cast({:add_player, name}, players) do
+  def handle_call({:add_player, name}, _from, players) do
     Cribbex.PlayerSupervisor.start_child(name)
-    {:noreply, [name | players]}
+    {:reply, [name | players], [name | players]}
   end
 
+  @impl true
   def handle_cast({:remove_player, name}, players) do
     with [{pid, _}] <- Registry.lookup(Registry.Players, name) do
       send(pid, :goodbye)

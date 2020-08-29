@@ -1,5 +1,10 @@
-<%= if String.length(@name) == 0 do %>
-  <%= live_component @socket, CribbexWeb.LandingComponent, name: @name %>
-<%= else %>
-  <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name %>
+<%= case @status do %>
+  <% :signin -> %>
+    <%= live_component @socket, CribbexWeb.LandingComponent, name: @name %>
+
+  <% :idle -> %>
+    <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name, players: @players %>
+
+  <% :in_game -> %>
+    <%= live_component @socket, CribbexWeb.GameComponent, name: @name, game_data: @game_data %>
 <% end %>
