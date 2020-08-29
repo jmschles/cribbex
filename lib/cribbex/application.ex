@@ -12,9 +12,12 @@ defmodule Cribbex.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Cribbex.PubSub},
       # Start the Endpoint (http/https)
-      CribbexWeb.Endpoint
+      CribbexWeb.Endpoint,
+      {Registry, [keys: :unique, name: Registry.Players]},
       # Start a worker by calling: Cribbex.Worker.start_link(arg)
       # {Cribbex.Worker, arg}
+      Cribbex.PlayerSupervisor,
+      Cribbex.PlayerManager
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

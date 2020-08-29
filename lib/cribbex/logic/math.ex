@@ -8,7 +8,8 @@ defmodule Cribbex.Logic.Math do
 
   def combination(0, _), do: [[]]
   def combination(_, []), do: []
+
   def combination(size, [x | rest]) do
-    (for y <- combination(size - 1, rest), do: [x | y]) ++ combination(size, rest)
+    for(y <- combination(size - 1, rest), do: [x | y]) ++ combination(size, rest)
   end
 end

@@ -1,0 +1,5 @@
+<%= if String.length(@name) == 0 do %>
+  <%= live_component @socket, CribbexWeb.LandingComponent, name: @name %>
+<%= else %>
+  <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name %>
+<% end %>
