@@ -7,7 +7,7 @@ defmodule Cribbex.Logic.Scoring do
     |> add_runs_score([flip_card | hand])
     |> add_pairs_score([flip_card | hand])
     |> add_flush_score(flip_card, hand, is_crib)
-    |> add_nobs_score(flip_card, hand, is_crib)
+    |> add_nobs_score(flip_card, hand)
     |> Enum.reject(fn {_score_type, score} -> score == 0 end)
     |> Enum.into(%{})
     |> add_total()
@@ -81,9 +81,7 @@ defmodule Cribbex.Logic.Scoring do
     if flush?([flip_card | hand]), do: 5, else: 0
   end
 
-  defp nobs_score(_flip_card, _hand, false), do: 0
-
-  defp nobs_score(flip_card, hand, true) do
+  defp nobs_score(flip_card, hand) do
     if has_right_jack?(flip_card, hand), do: 1, else: 0
   end
 

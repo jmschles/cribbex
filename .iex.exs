@@ -1,6 +1,8 @@
 alias Cribbex.Models.{
   Card,
-  Deck
+  Deck,
+  Game,
+  Player
 }
 
 alias Cribbex.Logic.{
