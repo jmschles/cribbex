@@ -1,5 +1,5 @@
 defmodule Cribbex.Logic.Scoring do
-  alias Cribbex.Logic.Math
+  alias Cribbex.Math
 
   def calculate_score(hand, flip_card, is_crib \\ false) do
     %{}
@@ -29,8 +29,8 @@ defmodule Cribbex.Logic.Scoring do
     Map.put(scores, :flush, flush_score(flip_card, hand, is_crib))
   end
 
-  defp add_nobs_score(scores, flip_card, hand, is_crib) do
-    Map.put(scores, :his_nobs, nobs_score(flip_card, hand, is_crib))
+  defp add_nobs_score(scores, flip_card, hand) do
+    Map.put(scores, :his_nobs, nobs_score(flip_card, hand))
   end
 
   defp add_total(scores), do: Map.put(scores, :total, Map.values(scores) |> Enum.sum())

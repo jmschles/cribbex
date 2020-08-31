@@ -3,7 +3,7 @@
     <%= live_component @socket, CribbexWeb.LandingComponent, name: @name %>
 
   <% :idle -> %>
-    <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name, players: @players %>
+    <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name, players: @players, invitations: @invitations %>
 
   <% :in_game -> %>
     <%= live_component @socket, CribbexWeb.GameComponent, name: @name, game_data: @game_data %>

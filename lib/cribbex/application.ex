@@ -14,8 +14,8 @@ defmodule Cribbex.Application do
       # Start the Endpoint (http/https)
       CribbexWeb.Endpoint,
       {Registry, [keys: :unique, name: Registry.Players]},
-      # Start a worker by calling: Cribbex.Worker.start_link(arg)
-      # {Cribbex.Worker, arg}
+      {Registry, [keys: :unique, name: Registry.Games]},
+      Cribbex.GameSupervisor,
       Cribbex.PlayerSupervisor,
       Cribbex.PlayerManager
     ]

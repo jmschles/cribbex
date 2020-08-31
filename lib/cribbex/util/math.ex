@@ -1,4 +1,4 @@
-defmodule Cribbex.Logic.Math do
+defmodule Cribbex.Math do
   def subsets(values) do
     2..length(values)
     |> Enum.flat_map(fn size ->
