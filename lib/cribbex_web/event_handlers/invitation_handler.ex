@@ -40,14 +40,7 @@ defmodule CribbexWeb.InvitationHandler do
       game_id: game_data.id
     })
 
-    decline_outstanding_invitations(socket)
-
-    {:noreply,
-     socket
-     |> assign(:invitations, [])
-     |> assign(:game_data, game_data)
-     |> assign(:status, :in_game)
-     |> clear_flash()}
+    {:noreply, game_start_pipeline(socket, game_data)}
   end
 
   # ignore if we weren't idle, i.e. another invitation was already accepted
@@ -63,25 +56,46 @@ defmodule CribbexWeb.InvitationHandler do
     {:noreply, socket}
   end
 
-  def handle_info("join-game", %{game_id: id}, socket) do
-    game_data = Cribbex.GameSupervisor.get_game_state_by_id(id)
+  def handle_info("join-game", %{game_id: game_id}, socket) do
+    game_data = Cribbex.GameSupervisor.get_game_state_by_id(game_id)
     decline_outstanding_invitations(socket)
 
-    {:noreply,
-     socket
-     |> assign(:invitations, [])
-     |> assign(:game_data, game_data)
-     |> assign(:status, :in_game)
-     |> clear_flash()}
+    {:noreply, game_start_pipeline(socket, game_data)}
   end
 
   # helpers
 
-  defp decline_outstanding_invitations(%{assigns: %{name: me, invitations: invitations}}) do
+  defp game_start_pipeline(socket, %{id: game_id} = game_data) do
+    socket
+     |> decline_outstanding_invitations()
+     |> subscribe_to_game(game_id)
+     |> assign(:invitations, [])
+     |> assign(:game_data, game_data)
+     |> assign(:status, :in_game)
+     |> clear_flash()
+  end
+
+  defp decline_outstanding_invitations(%{assigns: %{name: me, invitations: invitations}} = socket) do
     for invitation <- invitations do
       CribbexWeb.Endpoint.broadcast_from(self(), "player:#{invitation}", "invitation:declined", %{
         from: me
       })
     end
+
+    socket
   end
+
+  defp subscribe_to_game(%{assigns: %{name: me}} = socket, game_id) do
+    topic = topic_name(game_id)
+
+    # TODO: fix this, need `presence_diff` events to differentiate by topic somehow
+    # stick topic in the metadata and match on it? seems weird
+
+    # CribbexWeb.Endpoint.subscribe(topic)
+    # Cribbex.Presence.track(self(), topic, me, %{})
+
+    socket
+  end
+
+  defp topic_name(game_id), do: "game:" <> Atom.to_string(game_id)
 end

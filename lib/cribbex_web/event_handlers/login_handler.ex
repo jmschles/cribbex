@@ -15,7 +15,7 @@ defmodule CribbexWeb.LoginHandler do
   end
 
   def handle_presence_diff(
-        %{joins: joins, leaves: leaves},
+        %{joins: joins, leaves: leaves} = payload,
         %{assigns: %{name: name, players: players}} = socket
       ) do
     arrivals = Map.keys(joins) |> Enum.reject(&(&1 == name))
@@ -33,7 +33,7 @@ defmodule CribbexWeb.LoginHandler do
   @lobby_topic "lobby"
   defp login(socket, name) do
     CribbexWeb.Endpoint.subscribe(@lobby_topic)
-    Cribbex.Presence.track(self(), @lobby_topic, name, %{})
+    Cribbex.Presence.track(self(), @lobby_topic, name, %{name: name})
     players = Cribbex.Presence.list(@lobby_topic) |> Map.keys()
     CribbexWeb.Endpoint.subscribe("player:#{name}")
 
