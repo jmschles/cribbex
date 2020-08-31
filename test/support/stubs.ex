@@ -8,6 +8,7 @@ defmodule Stubs do
   def test_game do
     dealer = %Player{name: "dealer"}
     non_dealer = %Player{name: "non_dealer"}
+
     %Game{
       player_names: [dealer.name, non_dealer.name],
       dealer: dealer,

@@ -7,7 +7,7 @@ defmodule CribbexWeb.LandingComponent do
       <h1>Welcome to Cribbex!</h1>
       <p>Cribbage in Elixir! Maybe this time I'll actually finish it.</p>
 
-      <form phx-submit="submit">
+      <form phx-submit="login">
         <input type="text" name="name" value="<%= @name %>" placeholder="Enter your name!" autocomplete="off"/>
         <button type="submit">Go to lobby</button>
       </form>

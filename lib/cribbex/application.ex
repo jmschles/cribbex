@@ -15,7 +15,7 @@ defmodule Cribbex.Application do
       CribbexWeb.Endpoint,
       Cribbex.Presence,
       {Registry, [keys: :unique, name: Registry.Games]},
-      Cribbex.GameSupervisor,
+      Cribbex.GameSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

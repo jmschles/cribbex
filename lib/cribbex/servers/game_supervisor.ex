@@ -29,7 +29,7 @@ defmodule Cribbex.GameSupervisor do
     |> GenServer.call(:state)
   end
 
-  def try_game_find(_id, 0), do: raise "Game not found"
+  def try_game_find(_id, 0), do: raise("Game not found")
 
   def try_game_find(id, retries) do
     with [{pid, _}] <- Registry.lookup(Registry.Games, id) do

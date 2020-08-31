@@ -5,12 +5,13 @@ defmodule Cribbex.Models.Deck do
 
   def build do
     %__MODULE__{
-      cards: Enum.flat_map(Card.suits(), fn suit ->
-        Enum.map(Card.types(), fn type ->
-          Card.build(type, suit)
+      cards:
+        Enum.flat_map(Card.suits(), fn suit ->
+          Enum.map(Card.types(), fn type ->
+            Card.build(type, suit)
+          end)
         end)
-      end)
-      |> Enum.shuffle()
+        |> Enum.shuffle()
     }
   end
 end
