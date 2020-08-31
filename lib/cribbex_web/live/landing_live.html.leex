@@ -1,6 +1,6 @@
 <%= case @status do %>
   <% :signin -> %>
-    <%= live_component @socket, CribbexWeb.LandingComponent, name: @name %>
+    <%= live_component @socket, CribbexWeb.LandingComponent %>
 
   <% :idle -> %>
     <%= live_component @socket, CribbexWeb.LobbyComponent, name: @name, players: @players, invitations: @invitations %>
