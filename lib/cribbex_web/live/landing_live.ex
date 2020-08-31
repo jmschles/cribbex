@@ -47,7 +47,7 @@ defmodule CribbexWeb.LandingLive do
   end
 
   @impl true
-  def handle_info(%{event: "presence_diff", payload: %{joins: joins, leaves: leaves} = payload}, %{assigns: %{name: name, players: players}} = socket) do
+  def handle_info(%{event: "presence_diff", payload: %{joins: joins, leaves: leaves}}, %{assigns: %{name: name, players: players}} = socket) do
     arrivals = Map.keys(joins) |> Enum.reject(& &1 == name)
     departures = Map.keys(leaves) |> Enum.reject(& &1 == name)
     updated_player_list = ((players ++ arrivals) -- departures) |> Enum.sort()
