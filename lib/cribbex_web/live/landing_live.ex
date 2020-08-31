@@ -1,9 +1,10 @@
 defmodule CribbexWeb.LandingLive do
   use CribbexWeb, :live_view
 
+  @lobby_topic "lobby"
+
   @impl true
   def mount(_params, _session, socket) do
-    CribbexWeb.Endpoint.subscribe("general")
     {:ok, assign(socket, name: "", status: :signin, players: [])}
   end
 
@@ -11,10 +12,7 @@ defmodule CribbexWeb.LandingLive do
   def handle_event("submit", %{"name" => name}, socket) do
     case validate(name) do
       true ->
-        players = Cribbex.PlayerManager.add_player(name)
-        CribbexWeb.Endpoint.subscribe("player:#{name}")
-        CribbexWeb.Endpoint.broadcast_from(self(), "general", "players:update", %{players: players})
-        {:noreply, assign(socket, name: name, status: :idle, players: players, invitations: [])}
+        login(socket, name)
 
       _ ->
         {:noreply,
@@ -49,6 +47,13 @@ defmodule CribbexWeb.LandingLive do
   end
 
   @impl true
+  def handle_info(%{event: "presence_diff", payload: %{joins: joins, leaves: leaves} = payload}, %{assigns: %{name: name, players: players}} = socket) do
+    arrivals = Map.keys(joins) |> Enum.reject(& &1 == name)
+    departures = Map.keys(leaves) |> Enum.reject(& &1 == name)
+    updated_player_list = ((players ++ arrivals) -- departures) |> Enum.sort()
+    {:noreply, assign(socket, :players, updated_player_list)}
+  end
+
   def handle_info(%{event: "players:update", payload: %{players: players}}, socket) do
     {:noreply, assign(socket, :players, players)}
   end
@@ -69,8 +74,12 @@ defmodule CribbexWeb.LandingLive do
     {:noreply, socket}
   end
 
-  def handle_info(%{event: "invitation:declined", payload: %{from: invitee}}, socket) do
+  def handle_info(%{event: "invitation:declined", payload: %{from: invitee}}, %{assigns: %{status: :idle}} = socket) do
     {:noreply, socket |> put_flash(:info, "#{invitee} is busy or something")}
+  end
+
+  def handle_info(%{event: "invitation:declined"}, socket) do
+    {:noreply, socket}
   end
 
   def handle_info(%{event: "game:join", payload: %{game_id: id}}, socket) do
@@ -80,6 +89,7 @@ defmodule CribbexWeb.LandingLive do
   end
 
   # alphanumeric probably... or maybe gen ids so it doesn't matter?
+  # also needs to check for duplicate names...
   def validate(_name), do: true
 
   # helpers
@@ -87,5 +97,13 @@ defmodule CribbexWeb.LandingLive do
     for invitation <- invitations do
       CribbexWeb.Endpoint.broadcast_from(self(), "player:#{invitation}", "invitation:declined", %{from: me})
     end
+  end
+
+  defp login(socket, name) do
+    CribbexWeb.Endpoint.subscribe(@lobby_topic)
+    Cribbex.Presence.track(self(), @lobby_topic, name, %{})
+    players = Cribbex.Presence.list(@lobby_topic) |> Map.keys()
+    CribbexWeb.Endpoint.subscribe("player:#{name}")
+    {:noreply, assign(socket, name: name, status: :idle, players: players, invitations: [])}
   end
 end

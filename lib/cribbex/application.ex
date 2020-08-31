@@ -13,11 +13,9 @@ defmodule Cribbex.Application do
       {Phoenix.PubSub, name: Cribbex.PubSub},
       # Start the Endpoint (http/https)
       CribbexWeb.Endpoint,
-      {Registry, [keys: :unique, name: Registry.Players]},
+      Cribbex.Presence,
       {Registry, [keys: :unique, name: Registry.Games]},
       Cribbex.GameSupervisor,
-      Cribbex.PlayerSupervisor,
-      Cribbex.PlayerManager
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
