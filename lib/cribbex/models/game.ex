@@ -3,6 +3,7 @@ defmodule Cribbex.Models.Game do
   alias Cribbex.Helpers
 
   defdelegate deal(game), to: Cribbex.DiscardPhaseHandler
+  defdelegate set_dealer(game), to: Cribbex.DiscardPhaseHandler
 
   @phases [
     :discard,

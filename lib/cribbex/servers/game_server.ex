@@ -1,6 +1,7 @@
 defmodule Cribbex.GameServer do
   use GenServer
   require Logger
+  alias Cribbex.Models.Game
 
   # TODO: implement an idle timeout
 
@@ -19,7 +20,12 @@ defmodule Cribbex.GameServer do
   end
 
   @impl true
-  def handle_call(:state, _from, state) do
-    {:reply, state, state}
+  def handle_call(:state, _from, game_state) do
+    {:reply, game_state, game_state}
+  end
+
+  def handle_call(:new_hand, _from, game_state) do
+    updated_state = game_state |> Game.set_dealer() |> Game.deal()
+    {:reply, updated_state, updated_state}
   end
 end

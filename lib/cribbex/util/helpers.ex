@@ -8,6 +8,7 @@ defmodule Cribbex.Helpers do
     1..12
     |> Enum.reduce([], fn _, acc -> [Enum.random(alphabet) | acc] end)
     |> Enum.join("")
-    |> String.to_atom()
+
+    # |> String.to_atom()
   end
 end

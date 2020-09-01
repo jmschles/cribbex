@@ -88,14 +88,11 @@ defmodule CribbexWeb.InvitationHandler do
   defp subscribe_to_game(%{assigns: %{name: me}} = socket, game_id) do
     topic = topic_name(game_id)
 
-    # TODO: fix this, need `presence_diff` events to differentiate by topic somehow
-    # stick topic in the metadata and match on it? seems weird
-
-    # CribbexWeb.Endpoint.subscribe(topic)
-    # Cribbex.Presence.track(self(), topic, me, %{})
+    CribbexWeb.Endpoint.subscribe(topic)
+    Cribbex.Presence.track(self(), topic, me, %{topic: topic})
 
     socket
   end
 
-  defp topic_name(game_id), do: "game:" <> Atom.to_string(game_id)
+  defp topic_name(game_id), do: "game:" <> game_id
 end

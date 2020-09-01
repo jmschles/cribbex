@@ -9,6 +9,20 @@ defmodule Cribbex.DiscardPhaseHandler do
     do_deal(game, n)
   end
 
+  # TODO: it'd be fun to do something cooler here, like a low-card draw...
+  def set_dealer(%Game{dealer: nil, non_dealer: nil, player_names: player_names} = game) do
+    [dealer, non_dealer] =
+      player_names
+      |> Enum.shuffle()
+      |> Enum.map(&%Player{name: &1})
+
+    %{game | dealer: dealer, non_dealer: non_dealer, phase: :discard}
+  end
+
+  def set_dealer(%Game{dealer: dealer, non_dealer: non_dealer} = game) do
+    %{game | dealer: non_dealer, non_dealer: dealer, phase: :discard}
+  end
+
   defp do_deal(game, 0), do: game
 
   defp do_deal(

@@ -24,14 +24,27 @@ defmodule Cribbex.GameSupervisor do
     {:ok, initial_game_data}
   end
 
-  def get_game_state_by_id(id, retries \\ 10) do
-    try_game_find(id, retries)
+  def start_game(id) do
+    find_game(id)
+    |> GenServer.call(:new_hand)
+  end
+
+  def get_game_state_by_id(id) do
+    find_game(id)
     |> GenServer.call(:state)
   end
 
-  def try_game_find(_id, 0), do: raise("Game not found")
+  def find_game_by_id(id, retries \\ 10) do
+    find_game(id)
+  end
 
-  def try_game_find(id, retries) do
+  def find_game(id, retries \\ 10), do: try_game_find(id, retries)
+
+  # TODO: it'd be slightly (but not much) friendlier to find a way to
+  # send players back to the lobby if the game's gone missing
+  defp try_game_find(_id, 0), do: raise("Game not found")
+
+  defp try_game_find(id, retries) do
     with [{pid, _}] <- Registry.lookup(Registry.Games, id) do
       pid
     else
