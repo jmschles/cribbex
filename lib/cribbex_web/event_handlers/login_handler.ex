@@ -1,5 +1,5 @@
 defmodule CribbexWeb.LoginHandler do
-  import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3]
+  import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3, clear_flash: 1]
 
   def handle_login(%{"name" => name}, socket) do
     case Cribbex.NameValidator.validate(name) do
@@ -35,6 +35,7 @@ defmodule CribbexWeb.LoginHandler do
 
     {:noreply,
      socket
+     |> clear_flash()
      |> assign(:name, name)
      |> assign(:status, :idle)
      |> assign(:players, players)
