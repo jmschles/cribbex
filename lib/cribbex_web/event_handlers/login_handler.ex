@@ -2,14 +2,14 @@ defmodule CribbexWeb.LoginHandler do
   import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3]
 
   def handle_login(%{"name" => name}, socket) do
-    case validate(name) do
-      true ->
+    case Cribbex.NameValidator.validate(name) do
+      :ok ->
         login(socket, name)
 
-      _ ->
+      {:error, error} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Invalid name")
+         |> put_flash(:error, error)
          |> assign(:name, name)}
     end
   end
@@ -26,10 +26,6 @@ defmodule CribbexWeb.LoginHandler do
 
   # helpers
 
-  # alphanumeric probably... or maybe gen ids so it doesn't matter?
-  # also needs to check for duplicate names...
-  defp validate(_name), do: true
-
   @lobby_topic "lobby"
   defp login(socket, name) do
     CribbexWeb.Endpoint.subscribe(@lobby_topic)
@@ -44,4 +40,6 @@ defmodule CribbexWeb.LoginHandler do
      |> assign(:players, players)
      |> assign(:invitations, [])}
   end
+
+  def lobby_topic, do: @lobby_topic
 end

@@ -67,12 +67,12 @@ defmodule CribbexWeb.InvitationHandler do
 
   defp game_start_pipeline(socket, %{id: game_id} = game_data) do
     socket
-     |> decline_outstanding_invitations()
-     |> subscribe_to_game(game_id)
-     |> assign(:invitations, [])
-     |> assign(:game_data, game_data)
-     |> assign(:status, :in_game)
-     |> clear_flash()
+    |> decline_outstanding_invitations()
+    |> subscribe_to_game(game_id)
+    |> assign(:invitations, [])
+    |> assign(:game_data, game_data)
+    |> assign(:status, :in_game)
+    |> clear_flash()
   end
 
   defp decline_outstanding_invitations(%{assigns: %{name: me, invitations: invitations}} = socket) do
