@@ -1,5 +1,6 @@
 defmodule Cribbex.DiscardPhaseHandler do
   alias Cribbex.Models.{
+    Card,
     Deck,
     Game,
     Player
@@ -23,7 +24,19 @@ defmodule Cribbex.DiscardPhaseHandler do
     %{game | dealer: non_dealer, non_dealer: dealer, phase: :discard}
   end
 
-  defp do_deal(game, 0), do: game
+  defp do_deal(
+         %{
+           dealer: %{cards: dealer_cards} = dealer,
+           non_dealer: %{cards: non_dealer_cards} = non_dealer
+         } = game,
+         0
+       ) do
+    %{
+      game
+      | dealer: %{dealer | cards: Card.sort(dealer_cards)},
+        non_dealer: %{non_dealer | cards: Card.sort(non_dealer_cards)}
+    }
+  end
 
   defp do_deal(
          %{

@@ -14,6 +14,10 @@ defmodule Cribbex.Models.Card do
   def suits, do: ~w[Spades Hearts Diamonds Clubs]
   def types, do: ~w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
 
+  def sort(cards) do
+    Enum.sort_by(cards, &{&1.run_order, suit_rank(&1)})
+  end
+
   defp value("Ace"), do: 1
   defp value(type) when type in ~w[Jack Queen King], do: 10
   defp value(type), do: String.to_integer(type)
@@ -23,4 +27,8 @@ defmodule Cribbex.Models.Card do
   defp run_order("Queen"), do: 12
   defp run_order("King"), do: 13
   defp run_order(type), do: String.to_integer(type)
+
+  defp suit_rank(%__MODULE__{suit: suit}) do
+    Enum.find_index(suits(), & &1 == suit)
+  end
 end

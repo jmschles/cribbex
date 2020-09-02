@@ -6,7 +6,7 @@
     <%= :pregame -> %>
       <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id %>
     <%= :discard -> %>
-      <%= live_component @socket, CribbexWeb.Game.DiscardComponent, game_data: @game_data %>
+      <%= live_component @socket, CribbexWeb.Game.DiscardComponent, name: @name, game_data: @game_data %>
   <% end %>
 </section>
 <section class="phx-hero">
