@@ -1,5 +1,5 @@
 <h3>
   <%= for card <- @data.cards do %>
-    <p><%= card.human_name %></p>
+    <img class="card" src="<%= CribbexWeb.Helpers.card_back_path() %>">
   <% end %>
 </h3>

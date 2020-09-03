@@ -1,5 +1,5 @@
 defmodule Cribbex.Models.Card do
-  defstruct [:suit, :type, :value, :run_order, :human_name]
+  defstruct [:suit, :type, :value, :run_order, :human_name, :image_name]
 
   def build(type, suit) do
     %__MODULE__{
@@ -7,7 +7,8 @@ defmodule Cribbex.Models.Card do
       suit: suit,
       value: value(type),
       run_order: run_order(type),
-      human_name: "#{type} of #{suit}"
+      human_name: "#{type} of #{suit}",
+      image_name: set_image_name(type, suit)
     }
   end
 
@@ -27,6 +28,11 @@ defmodule Cribbex.Models.Card do
   defp run_order("Queen"), do: 12
   defp run_order("King"), do: 13
   defp run_order(type), do: String.to_integer(type)
+
+  @extension ".png"
+  defp set_image_name(type, suit) do
+    String.first(type) <> String.first(suit) <> @extension
+  end
 
   defp suit_rank(%__MODULE__{suit: suit}) do
     Enum.find_index(suits(), & &1 == suit)
