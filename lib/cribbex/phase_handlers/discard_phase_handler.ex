@@ -23,44 +23,12 @@ defmodule Cribbex.DiscardPhaseHandler do
     %{game | dealer: non_dealer, non_dealer: dealer, phase: :discard}
   end
 
-  # TODO: might be cleaner to just find the player that has the card that was clicked
-  # to avoid this duplication
-  def handle_discard(
-        %{dealer: %{cards: cards, name: name} = dealer, non_dealer: %{cards: other_cards}, crib: crib, deck: deck} = game,
-        card_code,
-        name
-      )
-      when length(cards) > 4 do
-    card = Enum.find(cards, &(&1.code == card_code))
-    updated_hand = Enum.reject(cards, & &1 == card)
-    case done_discarding?(updated_hand, other_cards) do
-      true ->
-        # TODO: make this better, I'm cheating because I know the deck is shuffled...
-        {flip_card, updated_deck} = turn_flip_card(deck)
-        %{game | dealer: %{dealer | cards: updated_hand}, crib: [card | crib], flip_card: flip_card, deck: updated_deck}
-      false ->
-        %{game | dealer: %{dealer | cards: updated_hand}, crib: [card | crib]}
-    end
+  def handle_discard(game, card_code, name) do
+    game
+    |> perform_discard(card_code, name)
+    |> maybe_flip_card_and_transition()
+    |> maybe_add_heels_score()
   end
-
-  def handle_discard(
-        %{non_dealer: %{cards: cards, name: name} = non_dealer, dealer: %{cards: other_cards}, crib: crib, deck: deck} = game,
-        card_code,
-        name
-      )
-      when length(cards) > 4 do
-    card = Enum.find(cards, &(&1.code == card_code))
-    updated_hand = Enum.reject(cards, & &1 == card)
-    case done_discarding?(updated_hand, other_cards) do
-      true ->
-        {flip_card, updated_deck} = turn_flip_card(deck)
-        %{game | non_dealer: %{non_dealer | cards: updated_hand}, crib: [card | crib], flip_card: flip_card, deck: updated_deck}
-      false ->
-        %{game | non_dealer: %{non_dealer | cards: updated_hand}, crib: [card | crib]}
-    end
-  end
-
-  def handle_discard(game, _card_code, _name), do: game
 
   defp do_deal(
          %{
@@ -94,14 +62,33 @@ defmodule Cribbex.DiscardPhaseHandler do
     {%{player | cards: [card | player.cards]}, rest}
   end
 
-  defp done_discarding?(cards, other_cards) do
-    length(cards ++ other_cards) == 8
+  defp perform_discard(%{dealer: %{cards: cards, name: name} = dealer, crib: crib} = game, card_code, name) when length(cards) > 4 do
+    card = Enum.find(cards, &(&1.code == card_code))
+    %{game | dealer: %{dealer | cards: Enum.reject(cards, & &1 == card)}, crib: [card | crib]}
   end
 
-  defp turn_flip_card([%Card{type: "Jack"} = flip_card | rest_of_deck]) do
-    # TODO: assign points to dealer
-    {flip_card, rest_of_deck}
+  defp perform_discard(%{non_dealer: %{cards: cards, name: name} = non_dealer, crib: crib} = game, card_code, name) when length(cards) > 4 do
+    card = Enum.find(cards, &(&1.code == card_code))
+    %{game | non_dealer: %{non_dealer | cards: Enum.reject(cards, & &1 == card)}, crib: [card | crib]}
   end
 
+  defp perform_discard(game, _card_code, _player_role), do: game
+
+  defp maybe_flip_card_and_transition(%{dealer: %{cards: dealer_cards}, non_dealer: %{cards: non_dealer_cards}, deck: deck} = game) when length(dealer_cards) == 4 and length(non_dealer_cards) == 4 do
+    {flip_card, updated_deck} = turn_flip_card(deck)
+    %{game | flip_card: flip_card, deck: updated_deck, phase: Game.next_phase(game)}
+  end
+
+  defp maybe_flip_card_and_transition(game), do: game
+
+  defp maybe_add_heels_score(%{flip_card: %Card{type: "Jack"}, dealer: %{score: score} = dealer} = game) do
+    # FIXME: extract this to a scoring module, every score addition needs to
+    # check win conditions
+    %{game | dealer: %{dealer | score: score + 2}}
+  end
+
+  defp maybe_add_heels_score(game), do: game
+
+  # TODO: it'd be cool if this were a player action
   defp turn_flip_card([flip_card | rest_of_deck]), do: {flip_card, rest_of_deck}
 end
