@@ -9,8 +9,14 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
-  def handle_event("discard", %{"card-code" => card_code, "game-id" => game_id}, %{assigns: %{name: name}} = socket) do
-    updated_game_data = GameSupervisor.perform_action(:discard, game_id, %{card_code: card_code, name: name})
+  def handle_event(
+        "discard",
+        %{"card-code" => card_code, "game-id" => game_id},
+        %{assigns: %{name: name}} = socket
+      ) do
+    updated_game_data =
+      GameSupervisor.perform_action(:discard, game_id, %{card_code: card_code, name: name})
+
     broadcast_state_update(updated_game_data)
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end

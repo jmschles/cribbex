@@ -62,26 +62,47 @@ defmodule Cribbex.DiscardPhaseHandler do
     {%{player | cards: [card | player.cards]}, rest}
   end
 
-  defp perform_discard(%{dealer: %{cards: cards, name: name} = dealer, crib: crib} = game, card_code, name) when length(cards) > 4 do
+  defp perform_discard(
+         %{dealer: %{cards: cards, name: name} = dealer, crib: crib} = game,
+         card_code,
+         name
+       )
+       when length(cards) > 4 do
     card = Enum.find(cards, &(&1.code == card_code))
-    %{game | dealer: %{dealer | cards: Enum.reject(cards, & &1 == card)}, crib: [card | crib]}
+    %{game | dealer: %{dealer | cards: Enum.reject(cards, &(&1 == card))}, crib: [card | crib]}
   end
 
-  defp perform_discard(%{non_dealer: %{cards: cards, name: name} = non_dealer, crib: crib} = game, card_code, name) when length(cards) > 4 do
+  defp perform_discard(
+         %{non_dealer: %{cards: cards, name: name} = non_dealer, crib: crib} = game,
+         card_code,
+         name
+       )
+       when length(cards) > 4 do
     card = Enum.find(cards, &(&1.code == card_code))
-    %{game | non_dealer: %{non_dealer | cards: Enum.reject(cards, & &1 == card)}, crib: [card | crib]}
+
+    %{
+      game
+      | non_dealer: %{non_dealer | cards: Enum.reject(cards, &(&1 == card))},
+        crib: [card | crib]
+    }
   end
 
   defp perform_discard(game, _card_code, _player_role), do: game
 
-  defp maybe_flip_card_and_transition(%{dealer: %{cards: dealer_cards}, non_dealer: %{cards: non_dealer_cards}, deck: deck} = game) when length(dealer_cards) == 4 and length(non_dealer_cards) == 4 do
+  defp maybe_flip_card_and_transition(
+         %{dealer: %{cards: dealer_cards}, non_dealer: %{cards: non_dealer_cards}, deck: deck} =
+           game
+       )
+       when length(dealer_cards) == 4 and length(non_dealer_cards) == 4 do
     {flip_card, updated_deck} = turn_flip_card(deck)
     %{game | flip_card: flip_card, deck: updated_deck, phase: Game.next_phase(game)}
   end
 
   defp maybe_flip_card_and_transition(game), do: game
 
-  defp maybe_add_heels_score(%{flip_card: %Card{type: "Jack"}, dealer: %{score: score} = dealer} = game) do
+  defp maybe_add_heels_score(
+         %{flip_card: %Card{type: "Jack"}, dealer: %{score: score} = dealer} = game
+       ) do
     # FIXME: extract this to a scoring module, every score addition needs to
     # check win conditions
     %{game | dealer: %{dealer | score: score + 2}}

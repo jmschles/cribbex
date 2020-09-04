@@ -34,6 +34,6 @@ defmodule Cribbex.Models.Card do
   end
 
   defp suit_rank(%__MODULE__{suit: suit}) do
-    Enum.find_index(suits(), & &1 == suit)
+    Enum.find_index(suits(), &(&1 == suit))
   end
 end
