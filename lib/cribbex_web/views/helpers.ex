@@ -1,10 +1,11 @@
 defmodule CribbexWeb.Helpers do
-  def card_image_path(%{image_name: filename}) do
-    CribbexWeb.Endpoint.static_path("/images/" <> filename)
+  @extension ".png"
+  def card_image_path(%{code: code}) do
+    CribbexWeb.Endpoint.static_path("/images/#{code}#{@extension}")
   end
 
   @back_color "blue"
   def card_back_path do
-    CribbexWeb.Endpoint.static_path("/images/#{@back_color}_back.png")
+    CribbexWeb.Endpoint.static_path("/images/#{@back_color}_back#{@extension}")
   end
 end

@@ -57,7 +57,7 @@ defmodule CribbexWeb.InvitationHandler do
   end
 
   def handle_info("join-game", %{game_id: game_id}, socket) do
-    game_data = Cribbex.GameSupervisor.get_game_state_by_id(game_id)
+    game_data = Cribbex.GameSupervisor.perform_action(:get_game_state, game_id)
     decline_outstanding_invitations(socket)
 
     {:noreply, game_start_pipeline(socket, game_data)}

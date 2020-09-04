@@ -1,3 +1,3 @@
 defmodule Cribbex.Models.Player do
-  defstruct [:name, :crib, score: 0, cards: []]
+  defstruct [:name, score: 0, cards: []]
 end

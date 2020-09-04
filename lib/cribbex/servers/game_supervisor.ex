@@ -24,18 +24,26 @@ defmodule Cribbex.GameSupervisor do
     {:ok, initial_game_data}
   end
 
-  def start_game(id) do
-    find_game(id)
-    |> GenServer.call(:new_hand)
+  def perform_action(action, game_id) do
+    find_game(game_id)
+    |> do_action(action)
   end
 
-  def get_game_state_by_id(id) do
-    find_game(id)
-    |> GenServer.call(:state)
+  def perform_action(action, game_id, data) do
+    find_game(game_id)
+    |> do_action(action, data)
   end
 
-  def find_game_by_id(id, retries \\ 10) do
-    find_game(id)
+  def do_action(game_pid, :start_game) do
+    GenServer.call(game_pid, :new_hand)
+  end
+
+  def do_action(game_pid, :get_game_state) do
+    GenServer.call(game_pid, :state)
+  end
+
+  def do_action(game_pid, :discard, %{card_code: card_code, name: name}) do
+    GenServer.call(game_pid, {:discard, card_code, name})
   end
 
   def find_game(id, retries \\ 10), do: try_game_find(id, retries)

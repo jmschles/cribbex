@@ -4,6 +4,8 @@ defmodule Cribbex.Models.Game do
 
   defdelegate deal(game), to: Cribbex.DiscardPhaseHandler
   defdelegate set_dealer(game), to: Cribbex.DiscardPhaseHandler
+  defdelegate handle_discard(game, card_code, name), to: Cribbex.DiscardPhaseHandler
+
 
   @phases [
     :discard,
@@ -15,9 +17,11 @@ defmodule Cribbex.Models.Game do
     :id,
     :dealer,
     :non_dealer,
+    :flip_card,
     deck: Deck.build(),
     phase: :pregame,
-    player_names: []
+    player_names: [],
+    crib: []
   ])
 
   def build(players) do

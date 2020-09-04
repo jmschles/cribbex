@@ -1,5 +1,5 @@
 defmodule Cribbex.Models.Card do
-  defstruct [:suit, :type, :value, :run_order, :human_name, :image_name]
+  defstruct [:suit, :type, :value, :run_order, :human_name, :code]
 
   def build(type, suit) do
     %__MODULE__{
@@ -8,7 +8,7 @@ defmodule Cribbex.Models.Card do
       value: value(type),
       run_order: run_order(type),
       human_name: "#{type} of #{suit}",
-      image_name: set_image_name(type, suit)
+      code: set_code(type, suit)
     }
   end
 
@@ -29,9 +29,8 @@ defmodule Cribbex.Models.Card do
   defp run_order("King"), do: 13
   defp run_order(type), do: String.to_integer(type)
 
-  @extension ".png"
-  defp set_image_name(type, suit) do
-    String.first(type) <> String.first(suit) <> @extension
+  defp set_code(type, suit) do
+    String.first(type) <> String.first(suit)
   end
 
   defp suit_rank(%__MODULE__{suit: suit}) do
