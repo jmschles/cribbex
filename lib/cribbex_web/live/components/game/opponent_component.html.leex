@@ -1,5 +1,5 @@
-<h3>
+<section class="opponent-cards">
   <%= for card <- @data.cards do %>
     <img class="card" src="<%= CribbexWeb.Helpers.card_back_path() %>">
   <% end %>
-</h3>
+</section>

@@ -19,6 +19,7 @@ defmodule Cribbex.Models.Game do
     :flip_card,
     deck: Deck.build(),
     phase: :pregame,
+    played_cards: [],
     player_names: [],
     crib: []
   ])

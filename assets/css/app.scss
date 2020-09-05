@@ -99,3 +99,68 @@
   width: 120px;
   height: 180px;
 }
+
+.game-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 3fr 1fr;
+  grid-template-rows: repeat(12, 1fr);
+  grid-template-areas:
+    "opponent_notifications opponent_cards opponent_cards opponent_score"
+    "opponent_notifications opponent_cards opponent_cards opponent_score"
+    "chat opponent_cards opponent_cards board"
+    "chat deck pegging board"
+    "chat deck pegging board"
+    "chat deck pegging board"
+    "chat deck pegging board"
+    "chat deck pegging board"
+    "chat deck pegging board"
+    "chat my_cards my_cards board"
+    "my_notifications my_cards my_cards my_score"
+    "my_notifications my_cards my_cards my_score";
+}
+
+.game-container section {
+  background-color: #ddd;
+  border-radius: 5px solid #bbb;
+  padding: 5px;
+}
+
+.opponent-notifications {
+  grid-area: opponent_notifications;
+}
+
+.opponent-cards {
+  grid-area: opponent_cards;
+}
+
+.opponent-score {
+  grid-area: opponent_score;
+}
+
+.chat {
+  grid-area: chat;
+}
+
+.deck {
+  grid-area: deck;
+}
+
+.pegging {
+  grid-area: pegging;
+}
+
+.board {
+  grid-area: board;
+}
+
+.my-notifications {
+  grid-area: my_notifications;
+}
+
+.my-cards {
+  grid-area: my_cards;
+}
+
+.my-score {
+  grid-area: my_score;
+}

@@ -1,14 +1,9 @@
-<section class="phx-hero">
-  <h1>Oi <%= @name %>, someday you can play a game!</h1>
-</section>
-<section class="phx-hero">
-  <%= case @game_data.phase do %>
-    <%= :pregame -> %>
-      <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id %>
-    <%= :discard -> %>
-      <%= live_component @socket, CribbexWeb.Game.DiscardComponent, name: @name, game_data: @game_data %>
-  <% end %>
-</section>
-<section class="phx-hero">
+<%= case @game_data.phase do %>
+  <%= :pregame -> %>
+    <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id %>
+  <%= _other -> %>
+    <%= live_component @socket, CribbexWeb.Game.MainComponent, name: @name, game_data: @game_data %>
+<% end %>
+<section>
   <button class="button-danger" phx-click="back-to-lobby">Back to lobby</button>
 </section>

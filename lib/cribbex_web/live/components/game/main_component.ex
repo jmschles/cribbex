@@ -1,4 +1,4 @@
-defmodule CribbexWeb.Game.DiscardComponent do
+defmodule CribbexWeb.Game.MainComponent do
   use CribbexWeb, :live_component
 
   def player_data(%{dealer: dealer_data, non_dealer: non_dealer_data}, my_name) do
