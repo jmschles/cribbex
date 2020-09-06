@@ -54,7 +54,7 @@ defmodule Cribbex.Helpers do
   end
 
   defp maybe_start_game(socket) do
-    case Cribbex.Presence.list("game:test") |> Map.keys() |> length() |> IO.inspect(label: "fuck") do
+    case Cribbex.Presence.list("game:test") |> Map.keys() |> length() do
       2 ->
         case socket.assigns.name do
           "toad" ->
@@ -71,8 +71,6 @@ defmodule Cribbex.Helpers do
 
   defp subscribe_to_game(%{assigns: %{name: me}} = socket, game_id) do
     topic = "game:" <> game_id
-    IO.inspect(me, label: "NAME")
-    IO.inspect(self(), label: "PID")
 
     CribbexWeb.Endpoint.subscribe(topic)
     Cribbex.Presence.track(self(), topic, me, %{topic: topic})

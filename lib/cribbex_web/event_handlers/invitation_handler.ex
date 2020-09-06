@@ -30,7 +30,7 @@ defmodule CribbexWeb.InvitationHandler do
   end
 
   def handle_info("received", %{from: inviter}, %{assigns: %{invitations: invitations}} = socket) do
-    {:noreply, assign(socket, :invitations, [inviter | invitations])}
+    {:noreply, assign(socket, :invitations, Enum.uniq(invitations ++ [inviter]))}
   end
 
   def handle_info("accepted", %{from: invitee}, %{assigns: %{status: :idle, name: me}} = socket) do
