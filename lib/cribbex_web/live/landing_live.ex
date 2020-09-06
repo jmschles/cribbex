@@ -2,6 +2,11 @@ defmodule CribbexWeb.LandingLive do
   use CribbexWeb, :live_view
 
   @impl true
+  # TESTING
+  def mount(_params, _session, socket) do
+    {:ok, Cribbex.Helpers.discard_phase_test(socket)}
+  end
+
   def mount(_params, _session, socket) do
     {:ok, assign(socket, status: :signin)}
   end

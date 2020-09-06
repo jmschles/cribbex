@@ -24,9 +24,10 @@ defmodule Cribbex.Models.Game do
     crib: []
   ])
 
-  def build(players) do
+  def build(players, test) do
+    id = if test, do: "test", else: Helpers.random_alpha_id()
     %__MODULE__{
-      id: Helpers.random_alpha_id(),
+      id: id,
       player_names: players
     }
   end

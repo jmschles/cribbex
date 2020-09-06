@@ -18,8 +18,8 @@ defmodule Cribbex.GameSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def initialize_game(players) do
-    initial_game_data = Game.build(players)
+  def initialize_game(players, test \\ false) do
+    initial_game_data = Game.build(players, test)
     start_child(initial_game_data)
     {:ok, initial_game_data}
   end
@@ -46,20 +46,23 @@ defmodule Cribbex.GameSupervisor do
     GenServer.call(game_pid, {:discard, card_code, name})
   end
 
-  def find_game(id, retries \\ 10), do: try_game_find(id, retries)
+  def find_game(id, tries \\ 10) do
+    IO.inspect(id, label: "GAME ID")
+    try_game_find(id, tries)
+  end
 
   # TODO: it'd be slightly (but not much) friendlier to find a way to
   # send players back to the lobby if the game's gone missing
   defp try_game_find(_id, 0), do: raise("Game not found")
 
-  defp try_game_find(id, retries) do
+  defp try_game_find(id, tries) do
     with [{pid, _}] <- Registry.lookup(Registry.Games, id) do
       pid
     else
       _ ->
-        Logger.warn("retrying game find, attempt #{11 - retries}")
+        Logger.warn("retrying game find, attempt #{11 - tries}")
         :timer.sleep(200)
-        try_game_find(id, retries - 1)
+        try_game_find(id, tries - 1)
     end
   end
 end
