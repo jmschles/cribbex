@@ -13,6 +13,7 @@ defmodule Cribbex.Helpers do
 
   alias Cribbex.Models.Game
   import Phoenix.LiveView.Utils, only: [assign: 3]
+  require Logger
 
   def discard_phase_test(socket) do
     name = pick_name()
@@ -31,11 +32,11 @@ defmodule Cribbex.Helpers do
 
   defp find_or_initialize_game do
     try do
-      pid = Cribbex.GameSupervisor.find_game("test", 1)
-      {:ok, game_state} = Cribbex.GameSupervisor.do_action(pid, :get_game_state)
-      game_state
+      pid = Cribbex.GameSupervisor.find_game("test", 5)
+      Cribbex.GameSupervisor.do_action(pid, :get_game_state)
     rescue
-      _error ->
+      error ->
+        IO.inspect(error)
         {:ok, game_data} = Cribbex.GameSupervisor.initialize_game(["frog", "toad"], true)
         game_data
     end
@@ -53,21 +54,13 @@ defmodule Cribbex.Helpers do
     end
   end
 
-  defp maybe_start_game(socket) do
-    case Cribbex.Presence.list("game:test") |> Map.keys() |> length() do
-      2 ->
-        case socket.assigns.name do
-          "toad" ->
-            {:noreply, socket} = CribbexWeb.GameHandler.handle_event("start", %{"game-id" => "test"}, socket)
-            socket
-
-          _ ->
-            socket
-        end
-
-      _ -> socket
-    end
+  defp maybe_start_game(%{assigns: %{name: "toad", game_data: %{phase: :pregame}}} = socket) do
+    Logger.warn("Starting game")
+    {:noreply, socket} = CribbexWeb.GameHandler.handle_event("start", %{"game-id" => "test"}, socket)
+    socket
   end
+
+  defp maybe_start_game(socket), do: socket
 
   defp subscribe_to_game(%{assigns: %{name: me}} = socket, game_id) do
     topic = "game:" <> game_id
