@@ -1,2 +1,9 @@
-<section class="board">
+<section class="board-container">
+  <div class="board">
+    <%= for row <- 0..29 do %>
+      <%= for column <- 0..3 do %>
+        <span class="dot dot-<%= dot_color(@game_data) %> dot-row-<%= row %> dot-column-<%= column %>"></span>
+      <% end %>
+    <% end %>
+  </div>
 </section>

@@ -1,4 +1,4 @@
-<section class="my-cards">
+<section class="my-cards card-container">
   <%= for card <- @data.cards do %>
     <img class="card" phx-click="game:discard" phx-value-card-code="<%= card.code %>" phx-value-game-id="<%= @game_id %>" src="<%= CribbexWeb.Helpers.card_image_path(card) %>">
   <% end %>

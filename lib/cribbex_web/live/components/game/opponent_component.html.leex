@@ -1,4 +1,4 @@
-<section class="opponent-cards">
+<section class="opponent-cards card-container">
   <%= for card <- @data.cards do %>
     <img class="card" src="<%= CribbexWeb.Helpers.card_back_path() %>">
   <% end %>

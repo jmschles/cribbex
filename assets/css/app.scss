@@ -95,12 +95,41 @@
   background-color: #a94442;
 }
 
+.login-page {
+  text-align: center;
+  border-bottom: 1px solid #e3e3e3;
+  background: #eee;
+  border-radius: 6px;
+  padding: 3em 3em 1em;
+  margin: 0 auto 3rem auto;
+  font-weight: 200;
+  font-size: 120%;
+  width: 50%
+}
+
+.login-page input {
+  background-color:  #fff;
+  width: 70%;
+}
+
+$light_gray: #eee;
+
+/* LOBBY */
+
+/* GAME AREA */
+
 .card {
-  width: 120px;
-  height: 180px;
+  width: 15%;
+  height: 95%;
+}
+
+.card-container {
+  margin: 0px auto;
+  text-align: center;
 }
 
 .game-container {
+  background-color: $light_gray;
   display: grid;
   grid-template-columns: 1fr 1fr 3fr 1fr;
   grid-template-rows: repeat(12, 1fr);
@@ -120,9 +149,9 @@
 }
 
 .game-container section {
-  background-color: #ddd;
-  border-radius: 5px solid #bbb;
-  padding: 5px;
+  margin: 5px auto;
+  padding: 5px 10px;
+  width: 100%;
 }
 
 .opponent-notifications {
@@ -149,10 +178,6 @@
   grid-area: pegging;
 }
 
-.board {
-  grid-area: board;
-}
-
 .my-notifications {
   grid-area: my_notifications;
 }
@@ -163,4 +188,52 @@
 
 .my-score {
   grid-area: my_score;
+}
+
+/* BOARD */
+
+.board-container {
+  grid-area: board;
+}
+
+.board {
+  position: relative;
+  background-image: url('/images/wood.jpg');
+  border-radius: 10px;
+  height: 100%;
+  width: 90%;
+  margin: 10px auto;
+}
+
+.dot {
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+  position: absolute;
+}
+
+.dot-black {
+  background-color: #000;
+}
+
+.dot-column-0 {
+  left: 15%;
+}
+
+.dot-column-1 {
+  left: 30%;
+}
+
+.dot-column-2 {
+  right: 30%;
+}
+
+.dot-column-3 {
+  right: 15%;
+}
+
+@for $i from 0 through 29 {
+  .dot-row-#{$i} {
+    top: 7.5% + (floor($i / 5) * 15) + (($i % 5) * 2.5);
+  }
 }
