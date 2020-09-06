@@ -29,9 +29,12 @@ defmodule CribbexWeb.PresenceHandler do
   def handle_info(
         "leave",
         %{player: left_player, topic: "lobby"},
-        %{assigns: %{players: players}} = socket
+        %{assigns: %{players: players, invitations: invitations}} = socket
       ) do
-    {:noreply, assign(socket, :players, (players -- [left_player]) |> Enum.sort())}
+    {:noreply,
+     socket
+     |> assign(:players, Enum.sort(players -- [left_player]))
+     |> assign(:invitations, invitations -- [left_player])}
   end
 
   def handle_info("leave", %{topic: "game:" <> _game_id}, socket) do

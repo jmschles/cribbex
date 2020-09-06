@@ -47,7 +47,6 @@ defmodule Cribbex.GameSupervisor do
   end
 
   def find_game(id, tries \\ 10) do
-    IO.inspect(id, label: "GAME ID")
     try_game_find(id, tries)
   end
 
