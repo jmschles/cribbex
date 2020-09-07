@@ -1,2 +1,9 @@
-<section class="my-score">
+<section class="my-score score-area blue">
+  <h4>
+    <%= @data.name %>
+    <%= if @dealer do %>
+      <span><em>(d)</em></span>
+    <% end %>
+  </h4>
+  <h5>Score: <%= @data.score %></h5>
 </section>

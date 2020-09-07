@@ -6,7 +6,7 @@
   <%= live_component @socket, CribbexWeb.Game.DeckComponent, flip_card: @game_data.flip_card %>
   <%= live_component @socket, CribbexWeb.Game.PeggingComponent, played_cards: @game_data.played_cards %>
   <%= live_component @socket, CribbexWeb.Game.PlayerComponent, data: player_data(@game_data, @name), game_id: @game_data.id %>
-  <%= live_component @socket, CribbexWeb.Game.OpponentScoreComponent, data: opponent_data(@game_data, @name), game_id: @game_data.id %>
-  <%= live_component @socket, CribbexWeb.Game.BoardComponent, game_data: @game_data %>
-  <%= live_component @socket, CribbexWeb.Game.MyScoreComponent, data: player_data(@game_data, @name), game_id: @game_data.id %>
+  <%= live_component @socket, CribbexWeb.Game.OpponentScoreComponent, data: opponent_data(@game_data, @name), dealer: @game_data.dealer.name != @name %>
+  <%= live_component @socket, CribbexWeb.Game.BoardComponent, my_data: player_data(@game_data, @name), opponent_data: opponent_data(@game_data, @name) %>
+  <%= live_component @socket, CribbexWeb.Game.MyScoreComponent, data: player_data(@game_data, @name), dealer: @game_data.dealer.name == @name %>
 </section>
