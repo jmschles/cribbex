@@ -90,22 +90,30 @@ defmodule Cribbex.DiscardPhaseHandler do
   defp perform_discard(game, _card_code, _player_role), do: game
 
   defp maybe_flip_card_and_transition(
-         %{dealer: %{cards: dealer_cards}, non_dealer: %{cards: non_dealer_cards}, deck: deck} =
-           game
+         %{
+           dealer: %{cards: dealer_cards},
+           non_dealer: %{cards: non_dealer_cards} = non_dealer,
+           deck: deck
+         } = game
        )
        when length(dealer_cards) == 4 and length(non_dealer_cards) == 4 do
     {flip_card, updated_deck} = turn_flip_card(deck)
-    %{game | flip_card: flip_card, deck: updated_deck, phase: Game.next_phase(game)}
+
+    %{
+      game
+      | flip_card: flip_card,
+        deck: updated_deck,
+        phase: Game.next_phase(game),
+        non_dealer: %{non_dealer | active: true}
+    }
   end
 
   defp maybe_flip_card_and_transition(game), do: game
 
   defp maybe_add_heels_score(
-         %{flip_card: %Card{type: "Jack"}, dealer: %{score: score} = dealer} = game
+         %{flip_card: %Card{type: "Jack"}} = game
        ) do
-    # FIXME: extract this to a scoring module, every score addition needs to
-    # check win conditions
-    %{game | dealer: %{dealer | score: score + 2}}
+    Cribbex.Logic.ScoreAdder.add_points(game, :dealer, 2)
   end
 
   defp maybe_add_heels_score(game), do: game

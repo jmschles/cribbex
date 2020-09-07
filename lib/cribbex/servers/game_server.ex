@@ -33,4 +33,9 @@ defmodule Cribbex.GameServer do
     updated_state = Game.handle_discard(game_state, card_code, name)
     {:reply, updated_state, updated_state}
   end
+
+  def handle_call({:play_card, card_code, name}, _from, game_state) do
+    updated_state = Game.handle_play(game_state, card_code, name)
+    {:reply, updated_state, updated_state}
+  end
 end

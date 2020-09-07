@@ -1,4 +1,4 @@
-defmodule Cribbex.Logic.Scoring do
+defmodule Cribbex.Logic.HandScoring do
   alias Cribbex.Math
 
   def calculate_score(hand, flip_card, is_crib \\ false) do

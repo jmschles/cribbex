@@ -3,15 +3,15 @@ defmodule Cribbex.Helpers do
   def random_alpha_id do
     alphabet = String.split(@chars, "", trim: true)
 
-    1..12
+    1..8
     |> Enum.reduce([], fn _, acc -> [Enum.random(alphabet) | acc] end)
     |> Enum.join("")
   end
 
 
-  ### for fast testing: load in with a live game state
+  ### for fast testing: load in with a live game state ###
 
-  alias Cribbex.Models.Game
+  # alias Cribbex.Models.Game
   import Phoenix.LiveView.Utils, only: [assign: 3]
   require Logger
 

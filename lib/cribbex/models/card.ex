@@ -19,6 +19,12 @@ defmodule Cribbex.Models.Card do
     Enum.sort_by(cards, &{&1.run_order, suit_rank(&1)})
   end
 
+  def get_value_by_card_code(card_code) do
+    types()
+    |> Enum.find(& String.first(card_code) == String.first(&1))
+    |> value()
+  end
+
   defp value("Ace"), do: 1
   defp value(type) when type in ~w[Jack Queen King], do: 10
   defp value(type), do: String.to_integer(type)

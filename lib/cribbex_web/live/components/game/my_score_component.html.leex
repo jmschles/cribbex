@@ -6,4 +6,9 @@
     <% end %>
   </h4>
   <h5>Score: <%= @data.score %></h5>
+  <div>
+    <%= if @data.active do %>
+      <img src="/images/arrow_left.png">
+    <% end %>
+  </div>
 </section>
