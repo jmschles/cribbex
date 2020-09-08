@@ -91,41 +91,17 @@ defmodule Cribbex.PeggingPhaseHandler do
     PegScoring.score_play(game)
   end
 
-  defp check_for_thirty_one_reset(%{active_played_cards: active_played_cards} = game) do
-    case hit_thirty_one?(active_played_cards) do
+  defp check_for_thirty_one_reset(game) do
+    case hit_thirty_one?(game) do
       true -> reset(game)
       false -> game
     end
   end
 
-  defp check_for_phase_completion(
-         %{
-           dealer: %{cards: [], name: dealer_name} = dealer,
-           non_dealer: %{cards: [], name: non_dealer_name} = non_dealer,
-           active_played_cards: active_played_cards,
-           inactive_played_cards: inactive_played_cards
-         } = game
-       ) do
-    all_played_cards = active_played_cards ++ inactive_played_cards
-
-    %{
-      game
-      | dealer: %{
-          dealer
-          | active: false,
-            said_go: false,
-            cards: reassign_cards(all_played_cards, dealer_name)
-        },
-        non_dealer: %{
-          non_dealer
-          | active: false,
-            said_go: false,
-            cards: reassign_cards(all_played_cards, non_dealer_name)
-        },
-        active_played_cards: [],
-        inactive_played_cards: [],
-        phase: :scoring
-    }
+  defp check_for_phase_completion(%{dealer: %{cards: []}, non_dealer: %{cards: []}} = game) do
+    game
+    |> maybe_award_final_go()
+    |> complete_phase()
   end
 
   defp check_for_phase_completion(game), do: game
@@ -145,16 +121,18 @@ defmodule Cribbex.PeggingPhaseHandler do
          false,
          %{dealer: %{active: true}, non_dealer: %{said_go: true}} = game
        ) do
-    ScoreAdder.add_points(game, :dealer, 1)
-    reset(game)
+    game
+    |> ScoreAdder.add_points(:dealer, 1)
+    |> reset()
   end
 
   defp maybe_say_go(
          false,
          %{non_dealer: %{active: true}, dealer: %{said_go: true}} = game
        ) do
-    ScoreAdder.add_points(game, :non_dealer, 1)
-    reset(game)
+    game
+    |> ScoreAdder.add_points(:non_dealer, 1)
+    |> reset()
   end
 
   defp maybe_say_go(false, %{dealer: %{active: true} = dealer, non_dealer: non_dealer} = game) do
@@ -187,18 +165,31 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> Enum.sum()
   end
 
-  defp hit_thirty_one?(cards) do
-    cards
-    |> Enum.map(& &1.card.value)
-    |> Enum.sum() == 31
+  defp maybe_award_final_go(
+         %{
+           dealer: %{name: name},
+           active_played_cards: [%PlayedCard{played_by: name} | _rest]
+         } = game
+       ) do
+    case hit_thirty_one?(game) do
+      true -> game
+      false -> ScoreAdder.add_points(game, :dealer, 1)
+    end
   end
 
-  defp reassign_cards(played_cards, name) do
-    played_cards
-    |> Enum.filter(&(&1.played_by == name))
-    |> Enum.map(& &1.card)
-    |> Card.sort()
+  defp maybe_award_final_go(
+         %{
+           non_dealer: %{name: name},
+           active_played_cards: [%PlayedCard{played_by: name} | _rest]
+         } = game
+       ) do
+    case hit_thirty_one?(game) do
+      true -> game
+      false -> ScoreAdder.add_points(game, :non_dealer, 1)
+    end
   end
+
+  defp maybe_award_final_go(game), do: game
 
   defp reset(
          %{
@@ -232,5 +223,46 @@ defmodule Cribbex.PeggingPhaseHandler do
         active_played_cards: [],
         inactive_played_cards: active_played_cards ++ inactive_played_cards
     }
+  end
+
+  defp complete_phase(
+         %{
+           dealer: %{cards: [], name: dealer_name} = dealer,
+           non_dealer: %{cards: [], name: non_dealer_name} = non_dealer,
+           active_played_cards: active_played_cards,
+           inactive_played_cards: inactive_played_cards
+         } = game
+       ) do
+    all_played_cards = active_played_cards ++ inactive_played_cards
+
+    %{
+      game
+      | dealer: %{
+          dealer
+          | active: false,
+            said_go: false,
+            cards: reassign_cards(all_played_cards, dealer_name)
+        },
+        non_dealer: %{
+          non_dealer
+          | active: false,
+            said_go: false,
+            cards: reassign_cards(all_played_cards, non_dealer_name)
+        },
+        active_played_cards: [],
+        inactive_played_cards: [],
+        phase: :scoring
+    }
+  end
+
+  defp hit_thirty_one?(game) do
+    current_count(game) == 31
+  end
+
+  defp reassign_cards(played_cards, name) do
+    played_cards
+    |> Enum.filter(&(&1.played_by == name))
+    |> Enum.map(& &1.card)
+    |> Card.sort()
   end
 end

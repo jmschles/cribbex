@@ -1,2 +1,11 @@
 <section class="pegging">
+  <div class="image-stack">
+    <%= Enum.with_index(@inactive_played_cards) |> Enum.map(fn {_played_card, i} -> %>
+      <img class="card image-layer-<%= i %>" src="<%= CribbexWeb.Helpers.card_back_path() %>">
+    <% end) %>
+
+    <%= @active_played_cards |> Enum.reverse() |> Enum.with_index() |> Enum.map(fn {played_card, i} -> %>
+      <img class="card image-layer-<%= i + length(@inactive_played_cards) %>" src="<%= CribbexWeb.Helpers.card_image_path(played_card.card) %>">
+    <% end) %>
+  </div>
 </section>

@@ -1,6 +1,5 @@
 defmodule Cribbex.GameServer do
   use GenServer
-  require Logger
   alias Cribbex.Models.Game
 
   # TODO: implement an idle timeout

@@ -111,15 +111,6 @@ $red: #BA1022;
   height: 100px;
 }
 
-.h4 {
-  font-weight: 400;
-  letter-spacing: 0.1rem;
-}
-
-.h5 {
-  letter-spacing: 0.1rem;
-}
-
 .button-danger {
   background-color: #a94442;
 }
@@ -197,11 +188,13 @@ $red: #BA1022;
   font-weight: 400;
   letter-spacing: 0;
   margin-top: 10%;
+  margin-bottom: 0.5rem;
 }
 
 .score-area h5 {
   font-weight: 400;
   letter-spacing: 0;
+  margin-bottom: 0.5rem;
 }
 
 .score-area img {
@@ -230,6 +223,7 @@ $red: #BA1022;
 }
 
 .pegging {
+  position: relative;
   grid-area: pegging;
 }
 
@@ -243,6 +237,28 @@ $red: #BA1022;
 
 .my-score {
   grid-area: my_score;
+}
+
+/* PEGGING */
+.image-stack {
+  padding-top: 20%;
+}
+
+.image-stack .card {
+  width: 20%;
+  height: 45%;
+}
+
+// .image-layer-0 {
+//   left: 0;
+// }
+
+@for $i from 0 through 7 {
+  .image-layer-#{$i} {
+    position: absolute;
+    left: $i * 10%;
+    z-index: $i + 1;
+  }
 }
 
 /* BOARD */
