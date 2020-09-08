@@ -38,4 +38,11 @@ defmodule Cribbex.GameServer do
     updated_state = Game.handle_play(game_state, card_code, name)
     {:reply, updated_state, updated_state}
   end
+
+  def handle_call(:check_for_go, _from, game_state) do
+    case Game.handle_go_check(game_state) do
+      :noop -> {:reply, :noop, game_state}
+      updated_game_state ->  {:reply, updated_game_state, updated_game_state}
+    end
+  end
 end

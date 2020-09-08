@@ -43,7 +43,7 @@ defmodule Cribbex.Helpers do
   end
 
   def sleep(socket) do
-    :timer.sleep(1000)
+    :timer.sleep(300)
     socket
   end
 

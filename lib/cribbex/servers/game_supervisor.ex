@@ -42,6 +42,10 @@ defmodule Cribbex.GameSupervisor do
     GenServer.call(game_pid, :state)
   end
 
+  def do_action(game_pid, :check_for_go) do
+    GenServer.call(game_pid, :check_for_go)
+  end
+
   def do_action(game_pid, :discard, %{card_code: card_code, name: name}) do
     GenServer.call(game_pid, {:discard, card_code, name})
   end

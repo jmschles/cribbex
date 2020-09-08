@@ -7,6 +7,7 @@ defmodule Cribbex.Models.Game do
   defdelegate handle_discard(game, card_code, name), to: Cribbex.DiscardPhaseHandler
 
   defdelegate handle_play(game, card_code, name), to: Cribbex.PeggingPhaseHandler
+  defdelegate handle_go_check(game), to: Cribbex.PeggingPhaseHandler
 
   @phases [
     :discard,

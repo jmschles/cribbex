@@ -41,4 +41,8 @@ defmodule CribbexWeb.LandingLive do
   def handle_info(%{event: "game:" <> event, payload: payload}, socket) do
     CribbexWeb.GameHandler.handle_info(event, payload, socket)
   end
+
+  def handle_info("game:" <> event, socket) do
+    CribbexWeb.GameHandler.handle_info(event, socket)
+  end
 end
