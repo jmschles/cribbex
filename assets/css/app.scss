@@ -219,6 +219,7 @@ $red: #BA1022;
 }
 
 .deck {
+  position: relative;
   grid-area: deck;
 }
 
@@ -249,14 +250,29 @@ $red: #BA1022;
   height: 45%;
 }
 
-// .image-layer-0 {
-//   left: 0;
-// }
-
 @for $i from 0 through 7 {
   .image-layer-#{$i} {
     position: absolute;
     left: $i * 10%;
+    z-index: $i + 1;
+  }
+}
+
+/* DECK */
+
+.deck-stack {
+  padding-top: 65%;
+}
+
+.deck-stack .card {
+  width: 60%;
+  height: 45%;
+}
+
+@for $i from 0 through 4 {
+  .deck-layer-#{$i} {
+    position: absolute;
+    left: $i * 3%;
     z-index: $i + 1;
   }
 }
@@ -289,13 +305,13 @@ $red: #BA1022;
 
 .dot.dot-blue {
   background-color: $blue;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 .dot.dot-red {
   background-color: $red;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 .dot-column-0 {

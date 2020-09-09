@@ -1,2 +1,12 @@
 <section class="deck">
+  <div class="deck-stack">
+    <%= for i <- 0..3 do %>
+      <img class="card deck-layer-<%= i %>" src="<%= CribbexWeb.Helpers.card_back_path() %>">
+    <% end %>
+    <%= if @flip_card do %>
+      <img class="card deck-layer-<%= 4 %>" src="<%= CribbexWeb.Helpers.card_image_path(@flip_card) %>">
+    <% else %>
+      <img class="card deck-layer-<%= 4 %>" src="<%= CribbexWeb.Helpers.card_back_path() %>">
+    <% end %>
+  </div>
 </section>
