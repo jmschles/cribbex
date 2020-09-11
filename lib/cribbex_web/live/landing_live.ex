@@ -24,6 +24,10 @@ defmodule CribbexWeb.LandingLive do
     CribbexWeb.GameHandler.handle_event(event, payload, socket)
   end
 
+  def handle_event("chat:" <> event, payload, socket) do
+    CribbexWeb.ChatHandler.handle_event(event, payload, socket)
+  end
+
   # TODO: decide what to do with this
   def handle_event("back-to-lobby", _params, socket) do
     {:noreply, assign(socket, status: :idle)}
@@ -44,5 +48,9 @@ defmodule CribbexWeb.LandingLive do
 
   def handle_info("game:" <> event, socket) do
     CribbexWeb.GameHandler.handle_info(event, socket)
+  end
+
+  def handle_info(%{event: "chat:" <> event, payload: payload}, socket) do
+    CribbexWeb.ChatHandler.handle_info(event, payload, socket)
   end
 end

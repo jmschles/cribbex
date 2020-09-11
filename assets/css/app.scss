@@ -225,6 +225,7 @@ $red: #BA1022;
 
 .lobby-chat {
   grid-area: chat;
+  min-height: 0;
 }
 
 .lobby-welcome {
@@ -236,7 +237,10 @@ $red: #BA1022;
   grid-area: players;
   height: 100%;
   ul {
-    padding-left: 5%;
+    padding-left: 7%;
+  }
+  h4 {
+    padding-top: 5%;
   }
 }
 
@@ -251,7 +255,10 @@ $red: #BA1022;
   grid-area: invitations;
   height: 100%;
   ul {
-    padding-left: 5%;
+    padding-left: 7%;
+  }
+  h4 {
+    padding-top: 5%;
   }
 }
 
@@ -260,6 +267,44 @@ $red: #BA1022;
   height: 90%;
   background-color: #f8f8f8;
   border-radius: 5px;
+}
+
+.lobby-chat {
+  grid-area: chat;
+  height: 100%;
+}
+
+.chat-container {
+  padding: 0 5%;
+  height: 90%;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  input {
+    width: 70%;
+    display: inline-block;
+    margin-right: 5%;
+    background-color: #fff;
+  }
+  button {
+    width: 20%;
+    display: inline-block;
+  }
+  form {
+    padding-top: 5%;
+  }
+}
+
+.chat-messages {
+  height: 82%;
+  ol {
+    margin: 0;
+    padding-top: 5%;
+    list-style: none;
+    overflow-y: scroll; // ugh cannot get this to work
+    li {
+      margin-bottom: 0.3rem;
+    }
+  }
 }
 
 /* GAME AREA */

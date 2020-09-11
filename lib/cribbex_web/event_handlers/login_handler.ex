@@ -27,6 +27,7 @@ defmodule CribbexWeb.LoginHandler do
      socket
      |> clear_flash()
      |> assign(:name, name)
+     |> assign(:messages, [])
      |> assign(:status, :idle)
      |> assign(:players, players)
      |> assign(:invitations, [])}
