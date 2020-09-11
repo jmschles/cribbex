@@ -144,7 +144,7 @@ $red: #BA1022;
 
 /* GAME AREA */
 
-.game-container {
+.main-container {
   background-color: $light_gray;
   display: grid;
   grid-template-columns: 1fr 1fr 3fr 1fr;
@@ -164,10 +164,22 @@ $red: #BA1022;
     "my_notifications my_cards my_cards my_score";
 }
 
-.game-container section {
+.main-container section {
   margin: 5px auto;
   padding: 5px 10px;
   width: 100%;
+}
+
+.scoring-header {
+  grid-area: opponent_cards;
+}
+
+.hand-score {
+  grid-area: my_cards;
+}
+
+.scored-hand {
+  grid-area: pegging;
 }
 
 .card {
@@ -216,6 +228,7 @@ $red: #BA1022;
 
 .chat {
   grid-area: chat;
+  overflow: scroll;
 }
 
 .deck {
@@ -256,6 +269,15 @@ $red: #BA1022;
     left: $i * 10%;
     z-index: $i + 1;
   }
+}
+
+/* CHAT */
+.chat ul {
+
+}
+
+.chat li {
+
 }
 
 /* DECK */

@@ -24,7 +24,7 @@ defmodule Cribbex.GameServer do
   end
 
   def handle_call(:new_hand, _from, game_state) do
-    updated_state = game_state |> Game.set_dealer() |> Game.deal()
+    updated_state = Game.start_hand(game_state)
     {:reply, updated_state, updated_state}
   end
 
@@ -43,5 +43,10 @@ defmodule Cribbex.GameServer do
       :noop -> {:reply, :noop, game_state}
       updated_game_state ->  {:reply, updated_game_state, updated_game_state}
     end
+  end
+
+  def handle_call({:ready, name}, _from, game_state) do
+    updated_state = Game.set_ready(game_state, name)
+    {:reply, updated_state, updated_state}
   end
 end

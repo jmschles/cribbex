@@ -54,6 +54,10 @@ defmodule Cribbex.GameSupervisor do
     GenServer.call(game_pid, {:play_card, card_code, name})
   end
 
+  def do_action(game_pid, :ready, %{name: name}) do
+    GenServer.call(game_pid, {:ready, name})
+  end
+
   def find_game(id, tries \\ 10) do
     try_game_find(id, tries)
   end

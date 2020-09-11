@@ -5,14 +5,14 @@ defmodule CribbexWeb.Game.BoardComponent do
   @my_peg_color "blue"
   @opponent_peg_color "red"
 
-  def dot_color(my_data, _opponent_data, column, row) when column in [0, 1] do
-    case peg?(my_data, column, row) do
+  def dot_color(player_data, _opponent_data, column, row) when column in [0, 1] do
+    case peg?(player_data, column, row) do
       true -> @my_peg_color
       false -> @hole_color
     end
   end
 
-  def dot_color(_my_data, opponent_data, column, row) when column in [2, 3] do
+  def dot_color(_player_data, opponent_data, column, row) when column in [2, 3] do
     case peg?(opponent_data, column, row) do
       true -> @opponent_peg_color
       false -> @hole_color

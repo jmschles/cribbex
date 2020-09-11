@@ -1,7 +1,7 @@
 <%= case @game_data.phase do %>
   <%= :pregame -> %>
     <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id %>
-  <% _other -> %>
+  <% _phase -> %>
     <%= live_component @socket, CribbexWeb.Game.MainComponent, name: @name, game_data: @game_data %>
 <% end %>
 <section>

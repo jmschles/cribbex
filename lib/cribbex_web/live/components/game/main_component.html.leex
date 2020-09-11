@@ -1,12 +1,19 @@
-<section class="game-container">
+<section class="main-container">
   <%= live_component @socket, CribbexWeb.Game.OpponentNotificationsComponent, game_data: @game_data %>
   <%= live_component @socket, CribbexWeb.Game.ChatComponent, game_data: @game_data %>
   <%= live_component @socket, CribbexWeb.Game.MyNotificationsComponent, game_data: @game_data %>
-  <%= live_component @socket, CribbexWeb.Game.OpponentComponent, data: opponent_data(@game_data, @name) %>
   <%= live_component @socket, CribbexWeb.Game.DeckComponent, flip_card: @game_data.flip_card %>
-  <%= live_component @socket, CribbexWeb.Game.PeggingComponent, active_played_cards: @game_data.active_played_cards, inactive_played_cards: @game_data.inactive_played_cards %>
-  <%= live_component @socket, CribbexWeb.Game.PlayerComponent, data: player_data(@game_data, @name), game_id: @game_data.id, game_phase: @game_data.phase %>
+
+  <%= case @game_data.phase do %>
+    <%= phase when phase in [:discard, :pegging] -> %>
+      <%= live_component @socket, CribbexWeb.Game.PeggingComponent, active_played_cards: @game_data.active_played_cards, inactive_played_cards: @game_data.inactive_played_cards %>
+      <%= live_component @socket, CribbexWeb.Game.PlayerCardsComponent, data: player_data(@game_data, @name), game_id: @game_data.id, game_phase: @game_data.phase %>
+      <%= live_component @socket, CribbexWeb.Game.OpponentCardsComponent, data: opponent_data(@game_data, @name) %>
+    <% :scoring -> %>
+      <%= live_component @socket, CribbexWeb.Game.ScoringComponent, scoring_data: @game_data.scoring_data, player_data: player_data(@game_data, @name), game_id: @game_data.id %>
+  <% end %>
+
   <%= live_component @socket, CribbexWeb.Game.OpponentScoreComponent, data: opponent_data(@game_data, @name), dealer: @game_data.dealer.name != @name %>
-  <%= live_component @socket, CribbexWeb.Game.BoardComponent, my_data: player_data(@game_data, @name), opponent_data: opponent_data(@game_data, @name) %>
+  <%= live_component @socket, CribbexWeb.Game.BoardComponent, player_data: player_data(@game_data, @name), opponent_data: opponent_data(@game_data, @name) %>
   <%= live_component @socket, CribbexWeb.Game.MyScoreComponent, data: player_data(@game_data, @name), dealer: @game_data.dealer.name == @name %>
 </section>

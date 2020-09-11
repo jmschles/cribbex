@@ -5,12 +5,26 @@ defmodule Cribbex.DiscardPhaseHandler do
     Player
   }
 
-  def deal(%Game{} = game, n \\ 6) do
+  def start_hand(game) do
+    game
+    |> set_dealer()
+    |> shuffle_deck()
+    |> deal()
+  end
+
+  def handle_discard(game, card_code, name) do
+    game
+    |> perform_discard(card_code, name)
+    |> maybe_flip_card_and_transition()
+    |> maybe_add_heels_score()
+  end
+
+  defp deal(%Game{} = game, n \\ 6) do
     do_deal(game, n)
   end
 
   # TODO: it'd be fun to do something cooler here, like a low-card draw...
-  def set_dealer(%Game{dealer: nil, non_dealer: nil, player_names: player_names} = game) do
+  defp set_dealer(%Game{dealer: nil, non_dealer: nil, player_names: player_names} = game) do
     [dealer, non_dealer] =
       player_names
       |> Enum.shuffle()
@@ -19,15 +33,22 @@ defmodule Cribbex.DiscardPhaseHandler do
     %{game | dealer: dealer, non_dealer: non_dealer, phase: :discard}
   end
 
-  def set_dealer(%Game{dealer: dealer, non_dealer: non_dealer} = game) do
+  defp set_dealer(%Game{dealer: dealer, non_dealer: non_dealer} = game) do
     %{game | dealer: non_dealer, non_dealer: dealer, phase: :discard}
   end
 
-  def handle_discard(game, card_code, name) do
-    game
-    |> perform_discard(card_code, name)
-    |> maybe_flip_card_and_transition()
-    |> maybe_add_heels_score()
+  defp shuffle_deck(%{deck: deck} = game) do
+    shuffled = 2..6
+    |> Enum.random()
+    |> shuffle_n_times(deck)
+
+    %{game | deck: shuffled}
+  end
+
+  defp shuffle_n_times(0, deck), do: deck
+
+  defp shuffle_n_times(n, deck) do
+    shuffle_n_times(n - 1, Enum.shuffle(deck))
   end
 
   defp do_deal(

@@ -1,6 +1,7 @@
 defmodule Cribbex.PeggingPhaseHandler do
   alias Cribbex.Models.{
     Card,
+    Game,
     PlayedCard
   }
 
@@ -102,6 +103,7 @@ defmodule Cribbex.PeggingPhaseHandler do
     game
     |> maybe_award_final_go()
     |> complete_phase()
+    |> Game.initiate_scoring_phase()
   end
 
   defp check_for_phase_completion(game), do: game
@@ -251,7 +253,7 @@ defmodule Cribbex.PeggingPhaseHandler do
         },
         active_played_cards: [],
         inactive_played_cards: [],
-        phase: :scoring
+        phase: Game.next_phase(game)
     }
   end
 

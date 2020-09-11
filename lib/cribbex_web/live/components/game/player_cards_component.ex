@@ -1,4 +1,4 @@
-defmodule CribbexWeb.Game.PlayerComponent do
+defmodule CribbexWeb.Game.PlayerCardsComponent do
   use CribbexWeb, :live_component
 
   def click_action(:discard), do: "discard"

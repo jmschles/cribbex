@@ -70,8 +70,7 @@ defmodule Cribbex.Logic.PegScoring do
     |> Enum.with_index()
     |> Enum.map(fn {value, i} -> (Enum.at(sorted_values, i + 1) || 0) - value end)
     |> Enum.drop(-1)
-    |> Enum.uniq()
-    |> length() == 1
+    |> Enum.all?(& &1 == 1)
   end
 
   defp n_of_a_kind?(card_types, n) do

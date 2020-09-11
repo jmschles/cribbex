@@ -2,12 +2,14 @@ defmodule Cribbex.Models.Game do
   alias Cribbex.Models.Deck
   alias Cribbex.Helpers
 
-  defdelegate deal(game), to: Cribbex.DiscardPhaseHandler
-  defdelegate set_dealer(game), to: Cribbex.DiscardPhaseHandler
+  defdelegate start_hand(game), to: Cribbex.DiscardPhaseHandler
   defdelegate handle_discard(game, card_code, name), to: Cribbex.DiscardPhaseHandler
 
   defdelegate handle_play(game, card_code, name), to: Cribbex.PeggingPhaseHandler
   defdelegate handle_go_check(game), to: Cribbex.PeggingPhaseHandler
+
+  defdelegate initiate_scoring_phase(game), to: Cribbex.ScoringPhaseHandler
+  defdelegate set_ready(game, name), to: Cribbex.ScoringPhaseHandler
 
   @phases [
     :discard,
@@ -23,6 +25,7 @@ defmodule Cribbex.Models.Game do
     :flip_card,
     :winner,
     deck: Deck.build(),
+    scoring_data: %{},
     phase: :pregame,
     active_played_cards: [],
     inactive_played_cards: [],
