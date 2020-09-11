@@ -1,0 +1,15 @@
+<section class="players-container">
+  <div class="players-list">
+    <h4>Players online</h4>
+    <ul>
+      <%= for player <- @players do %>
+        <li><%= player %>
+        <%= if player != @name do %>
+          | <a href="#" phx-click="invitation:sent" phx-value-to="<%= player %>">Invite to play</a></li>
+        <% else %>
+          <em>(you)</em>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</section>

@@ -10,17 +10,22 @@
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-        </nav>
-      </section>
-    </header>
-    <%= @inner_content %>
+    <div class="overlord">
+      <header class="main-header">
+        <div class="header-left"><h3>Cribbex</h3></div>
+        <div class="header-right">
+          <img class="board-icon" src="/images/board_icon.png" />
+        </div>
+      </header>
+      <%= @inner_content %>
+      <footer class="main-footer">
+        <div class="footer-left">
+          written by <a href="https://www.github.com/jmschles">jmschles</a>
+        </div>
+        <div class="footer-right">
+          © 2020
+        </div>
+      </footer>
+    <div class="root">
   </body>
 </html>

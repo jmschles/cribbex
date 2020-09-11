@@ -2,9 +2,11 @@
   <h3><%= @scoring_data.title %></h3>
 </section>
 <section class="scored-hand">
-  <%= for card <- @scoring_data.cards do %>
-    <img class="card" src="<%= CribbexWeb.Helpers.card_image_path(card) %>">
-  <% end %>
+  <div>
+    <%= for card <- @scoring_data.cards do %>
+      <img class="card" src="<%= CribbexWeb.Helpers.card_image_path(card) %>">
+    <% end %>
+  </div>
 </section>
 <section class="hand-score">
   <ul>

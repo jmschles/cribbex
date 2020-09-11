@@ -49,21 +49,16 @@ defmodule Cribbex.Logic.PegScoring do
     end
   end
 
-  def run_length(card_values, length \\ 3)
+  defp run_length(card_values) when length(card_values) < 3, do: 0
 
-  def run_length(card_values, _length) when length(card_values) < 3, do: 0
-
-  # double check this
-  def run_length(card_values, length) when length(card_values) < length, do: length(card_values)
-
-  def run_length(card_values, length) do
-    case Enum.take(card_values, length) |> is_run?() do
-      true -> run_length(card_values, length + 1)
-      false -> length - 1
+  defp run_length(card_values) do
+    case is_run?(card_values) do
+      true -> length(card_values)
+      false -> card_values |> remove_last_element() |> run_length()
     end
   end
 
-  def is_run?(card_values) do
+  defp is_run?(card_values) do
     sorted_values = Enum.sort(card_values)
 
     sorted_values
@@ -71,6 +66,13 @@ defmodule Cribbex.Logic.PegScoring do
     |> Enum.map(fn {value, i} -> (Enum.at(sorted_values, i + 1) || 0) - value end)
     |> Enum.drop(-1)
     |> Enum.all?(& &1 == 1)
+  end
+
+  defp remove_last_element(list) do
+    list
+    |> Enum.reverse()
+    |> tl()
+    |> Enum.reverse()
   end
 
   defp n_of_a_kind?(card_types, n) do

@@ -58,8 +58,8 @@
 
 /* Alerts and form errors */
 .alert {
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 5px;
+  margin-bottom: 10px;
   border: 1px solid transparent;
   border-radius: 4px;
 }
@@ -99,6 +99,71 @@
 
 /* GENERAL */
 
+ul {
+  list-style: disc;
+}
+
+.overlord {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 70%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 1fr 1fr 15fr 1fr;
+  grid-template-areas:
+    "header"
+    "flash"
+    "main_content"
+    "footer";
+}
+
+.main-header {
+  grid-area: header;
+  border-bottom: 1px solid #eee;
+}
+
+.main-footer {
+  grid-area: footer;
+  border-top: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.main-content {
+  grid-area: main_content;
+}
+
+.flash-container {
+  grid-area: flash;
+  height: 40px;
+}
+
+.header-left {
+  float: left;
+  h3 {
+    padding-top: 20%;
+  }
+}
+
+.header-right {
+  float: right;
+}
+
+.footer-left {
+  float: left;
+}
+
+.footer-right {
+  float: right;
+}
+
+.board-icon {
+  float: right;
+  width: 50%;
+}
+
 $light_gray: #eee;
 $blue: #2222EE;
 $red: #BA1022;
@@ -108,7 +173,6 @@ $red: #BA1022;
   padding: 0 2.0rem;
   position: relative;
   width: 80%;
-  height: 100px;
 }
 
 .button-danger {
@@ -121,10 +185,10 @@ $red: #BA1022;
   background: #eee;
   border-radius: 6px;
   padding: 3em 3em 1em;
-  margin: 0 auto 3rem auto;
+  margin: 6rem auto 3rem auto;
   font-weight: 200;
   font-size: 120%;
-  width: 50%
+  width: 50%;
 }
 
 .login-page input {
@@ -142,9 +206,66 @@ $red: #BA1022;
 
 /* LOBBY */
 
+.lobby-container {
+  height: 83vh;
+  background-color: $light_gray;
+  display: grid;
+  grid-template-rows: 1fr 9fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas:
+    "welcome welcome welcome"
+    "players chat invitations"
+}
+
+.lobby-container section {
+  margin: 5px auto;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.lobby-chat {
+  grid-area: chat;
+}
+
+.lobby-welcome {
+  grid-area: welcome;
+  text-align: center;
+}
+
+.players-container {
+  grid-area: players;
+  height: 100%;
+  ul {
+    padding-left: 5%;
+  }
+}
+
+.players-list {
+  padding: 0 5%;
+  height: 90%;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.invitations-container {
+  grid-area: invitations;
+  height: 100%;
+  ul {
+    padding-left: 5%;
+  }
+}
+
+.invitations-list {
+  padding: 0 5%;
+  height: 90%;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
 /* GAME AREA */
 
 .main-container {
+  max-height: 83vh;
   background-color: $light_gray;
   display: grid;
   grid-template-columns: 1fr 1fr 3fr 1fr;
@@ -180,6 +301,15 @@ $red: #BA1022;
 
 .scored-hand {
   grid-area: pegging;
+}
+
+.score-hand div {
+  padding-top: 20%;
+}
+
+.scored-hand .card {
+  height: 45%;
+  width: 25%;
 }
 
 .card {
