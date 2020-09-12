@@ -1,3 +1,8 @@
-<button phx-click="game:start" phx-value-game-id="<%= @game_id %>">
-  Start game!
-</buton>
+<div class="game-start">
+  <h4>
+    Ready to play with <strong><%= @opponent %></strong>?
+  </h4>
+  <button phx-click="game:start" phx-value-game-id="<%= @game_id %>">
+    Start game!
+  </buton>
+</div>

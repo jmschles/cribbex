@@ -1,2 +1,18 @@
-<section class="chat">
+<section class="game-chat">
+  <div class="chat-container">
+    <div class="chat-messages">
+      <ol>
+        <%= for message <- @messages do %>
+          <li>
+            <strong><%= message.sender %>:</strong> <%= message.text %>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+    <form phx-submit="chat:sent">
+      <input class="chat-input" name="text" type="text" placeholder="Chat" autocomplete="off" />
+      <input type="hidden" name="channel" value="game:<%= @game_id %>" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
 </section>

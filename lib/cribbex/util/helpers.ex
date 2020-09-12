@@ -26,6 +26,7 @@ defmodule Cribbex.Helpers do
     |> assign(:name, name)
     |> subscribe_to_game(game.id)
     |> assign(:game_data, game)
+    |> assign(:messages, [])
     |> sleep()
     |> maybe_start_game()
   end

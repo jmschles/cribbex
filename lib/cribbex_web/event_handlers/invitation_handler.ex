@@ -72,6 +72,7 @@ defmodule CribbexWeb.InvitationHandler do
     |> assign(:invitations, [])
     |> assign(:game_data, game_data)
     |> assign(:status, :in_game)
+    |> assign(:messages, [])
     |> clear_flash()
   end
 

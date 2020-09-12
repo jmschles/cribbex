@@ -1,6 +1,6 @@
 <%= case @game_data.phase do %>
   <%= :pregame -> %>
-    <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id %>
+    <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id, opponent: Enum.reject(@game_data.player_names, & &1 == @name) %>
   <% _phase -> %>
-    <%= live_component @socket, CribbexWeb.Game.MainComponent, name: @name, game_data: @game_data %>
+    <%= live_component @socket, CribbexWeb.Game.MainComponent, name: @name, game_data: @game_data, messages: @messages %>
 <% end %>

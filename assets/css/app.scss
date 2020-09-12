@@ -165,8 +165,8 @@ ul {
 }
 
 $light_gray: #eee;
-$blue: #2222EE;
-$red: #BA1022;
+$blue: #3333FF;
+$red: #CB2133;
 
 .container {
   margin: 0 auto;
@@ -353,8 +353,8 @@ $red: #BA1022;
 }
 
 .scored-hand .card {
-  height: 45%;
-  width: 25%;
+  height: 40%;
+  width: 20%;
 }
 
 .card {
@@ -401,9 +401,19 @@ $red: #BA1022;
   grid-area: opponent_score;
 }
 
-.chat {
+.game-chat {
   grid-area: chat;
   overflow: scroll;
+  button {
+    line-height: 2rem;
+    padding: 0 1rem;
+    width: 35%;
+    height: 3rem;
+  }
+  input {
+    height: 3rem;
+    width: 55%;
+  }
 }
 
 .deck {
@@ -502,13 +512,13 @@ $red: #BA1022;
 
 .dot.dot-blue {
   background-color: $blue;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 .dot.dot-red {
   background-color: $red;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .dot-column-0 {
@@ -530,5 +540,13 @@ $red: #BA1022;
 @for $i from 0 through 29 {
   .dot-row-#{$i} {
     top: 7.5% + (floor($i / 5) * 15) + (($i % 5) * 2.5);
+  }
+}
+
+.game-start {
+  text-align: center;
+  margin-top: 25%;
+  h4 {
+    margin-bottom: 3%;
   }
 }

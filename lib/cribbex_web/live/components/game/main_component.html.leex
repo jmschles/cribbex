@@ -1,6 +1,6 @@
 <section class="main-container">
   <%= live_component @socket, CribbexWeb.Game.OpponentNotificationsComponent, game_data: @game_data %>
-  <%= live_component @socket, CribbexWeb.Game.ChatComponent, game_data: @game_data %>
+  <%= live_component @socket, CribbexWeb.Game.ChatComponent, game_id: @game_data.id, messages: @messages |> Enum.take(6) |> Enum.reverse() %>
   <%= live_component @socket, CribbexWeb.Game.MyNotificationsComponent, game_data: @game_data %>
   <%= live_component @socket, CribbexWeb.Game.DeckComponent, flip_card: @game_data.flip_card %>
 

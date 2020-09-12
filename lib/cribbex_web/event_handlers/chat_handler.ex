@@ -27,6 +27,7 @@ defmodule CribbexWeb.ChatHandler do
     CribbexWeb.Endpoint.broadcast_from(self(), channel, "chat:received", message)
   end
 
+  # this is really just a hack because I can't get scrolling to work
   @max_message_count 14
   def add_and_truncate(message, messages) do
     Enum.take([message | messages], @max_message_count)
