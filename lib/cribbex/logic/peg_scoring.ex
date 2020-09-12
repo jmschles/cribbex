@@ -12,10 +12,15 @@ defmodule Cribbex.Logic.PegScoring do
   end
 
   defp check_tally(%{active_played_cards: cards} = game, role) do
-    if add_up_to_something_good?(cards) do
-      ScoreAdder.add_points(game, role, 2)
-    else
-      game
+    case tally(cards) do
+      31 ->
+        ScoreAdder.add_points(game, role, 2, "thirty-one")
+
+      15 ->
+        ScoreAdder.add_points(game, role, 2, "fifteen")
+
+      _ ->
+        game
     end
   end
 
@@ -24,13 +29,13 @@ defmodule Cribbex.Logic.PegScoring do
 
     cond do
       n_of_a_kind?(card_types, 4) ->
-        ScoreAdder.add_points(game, role, 12)
+        ScoreAdder.add_points(game, role, 12, "four of a kind")
 
       n_of_a_kind?(card_types, 3) ->
-        ScoreAdder.add_points(game, role, 6)
+        ScoreAdder.add_points(game, role, 6, "three of a kind")
 
       n_of_a_kind?(card_types, 2) ->
-        ScoreAdder.add_points(game, role, 2)
+        ScoreAdder.add_points(game, role, 2, "pair")
 
       true ->
         game
@@ -42,7 +47,7 @@ defmodule Cribbex.Logic.PegScoring do
 
     case run_length(card_values) do
       n when n >= 3 ->
-        ScoreAdder.add_points(game, role, n)
+        ScoreAdder.add_points(game, role, n, "run")
 
       _ ->
         game
@@ -79,11 +84,10 @@ defmodule Cribbex.Logic.PegScoring do
     length(card_types) >= n && Enum.take(card_types, n) |> Enum.uniq() |> length() == 1
   end
 
-  defp add_up_to_something_good?(cards) do
+  defp tally(cards) do
     cards
     |> Enum.map(& &1.card.value)
     |> Enum.sum()
-    |> Kernel.in([15, 31])
   end
 
   defp find_player_role(

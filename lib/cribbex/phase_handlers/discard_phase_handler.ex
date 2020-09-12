@@ -134,7 +134,7 @@ defmodule Cribbex.DiscardPhaseHandler do
   defp maybe_add_heels_score(
          %{flip_card: %Card{type: "Jack"}} = game
        ) do
-    Cribbex.Logic.ScoreAdder.add_points(game, :dealer, 2)
+    Cribbex.Logic.ScoreAdder.add_points(game, :dealer, 2, "his heels")
   end
 
   defp maybe_add_heels_score(game), do: game

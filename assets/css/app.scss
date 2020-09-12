@@ -326,8 +326,8 @@ $red: #CB2133;
     "chat deck pegging board"
     "chat deck pegging board"
     "chat my_cards my_cards board"
-    "my_notifications my_cards my_cards my_score"
-    "my_notifications my_cards my_cards my_score";
+    "player_notifications my_cards my_cards my_score"
+    "player_notifications my_cards my_cards my_score";
 }
 
 .main-container section {
@@ -391,6 +391,14 @@ $red: #CB2133;
 
 .opponent-notifications {
   grid-area: opponent_notifications;
+  ul {
+    list-style: none;
+    padding-left: 8%;
+    li {
+      margin-bottom: 0.5em;
+      font-size: 1.1em;
+    }
+  }
 }
 
 .opponent-cards {
@@ -414,6 +422,12 @@ $red: #CB2133;
     height: 3rem;
     width: 55%;
   }
+  .chat-container {
+    height: 100%;
+  }
+  .chat-messages {
+    height: 86%;
+  }
 }
 
 .deck {
@@ -426,8 +440,16 @@ $red: #CB2133;
   grid-area: pegging;
 }
 
-.my-notifications {
-  grid-area: my_notifications;
+.player-notifications {
+  grid-area: player_notifications;
+  ul {
+    list-style: none;
+    padding-left: 8%;
+    li {
+      margin-bottom: 0.5em;
+      font-size: 1.1em;
+    }
+  }
 }
 
 .my-cards {

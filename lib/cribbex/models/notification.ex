@@ -1,13 +1,14 @@
 defmodule Cribbex.Models.Notification do
-  defstruct [:id, :player_name, :reason, :points, :text]
+  defstruct [:source, :points, :text]
 
-  def build(player_name: player_name, reason: reason, points: points) do
+  def build(source, points) do
     %__MODULE__{
-      id: Cribbex.Helpers.random_alpha_id(),
-      player_name: player_name,
-      reason: reason,
+      source: source,
       points: points,
-      text: "#{points} for #{reason}"
+      text: text(source, points)
     }
   end
+
+  defp text(source, nil), do: source
+  defp text(source, points), do: "#{points} for #{source}"
 end

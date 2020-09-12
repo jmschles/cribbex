@@ -6,6 +6,7 @@ defmodule Cribbex.PeggingPhaseHandler do
   }
 
   alias Cribbex.Logic.{
+    Notifier,
     PegScoring,
     ScoreAdder
   }
@@ -60,8 +61,8 @@ defmodule Cribbex.PeggingPhaseHandler do
 
     %{
       game
-      | dealer: %{dealer | cards: cards -- [card], active: false},
-        non_dealer: %{non_dealer | active: true},
+      | dealer: %{dealer | cards: cards -- [card], active: false, notifications: []},
+        non_dealer: %{non_dealer | active: true, notifications: []},
         active_played_cards: [played_card | active_played_cards]
     }
   end
@@ -80,8 +81,8 @@ defmodule Cribbex.PeggingPhaseHandler do
 
     %{
       game
-      | non_dealer: %{non_dealer | cards: cards -- [card], active: false},
-        dealer: %{dealer | active: true},
+      | non_dealer: %{non_dealer | cards: cards -- [card], active: false, notifications: []},
+        dealer: %{dealer | active: true, notifications: []},
         active_played_cards: [played_card | active_played_cards]
     }
   end
@@ -118,13 +119,13 @@ defmodule Cribbex.PeggingPhaseHandler do
     Enum.any?(cards, &valid_play?(game, &1.code))
   end
 
-  # TODO: add clauses to say go when out of cards
+  # both said go, point awarded
   defp maybe_say_go(
          false,
          %{dealer: %{active: true}, non_dealer: %{said_go: true}} = game
        ) do
     game
-    |> ScoreAdder.add_points(:dealer, 1)
+    |> ScoreAdder.add_points(:dealer, 1, "go")
     |> reset()
   end
 
@@ -133,16 +134,18 @@ defmodule Cribbex.PeggingPhaseHandler do
          %{non_dealer: %{active: true}, dealer: %{said_go: true}} = game
        ) do
     game
-    |> ScoreAdder.add_points(:non_dealer, 1)
+    |> ScoreAdder.add_points(:non_dealer, 1, "go")
     |> reset()
   end
 
+  # player can't go but opponent can
   defp maybe_say_go(false, %{dealer: %{active: true} = dealer, non_dealer: non_dealer} = game) do
     %{
       game
       | dealer: %{dealer | said_go: true, active: false},
         non_dealer: %{non_dealer | active: true}
     }
+    |> Notifier.add_notification(:dealer, "go")
   end
 
   defp maybe_say_go(false, %{non_dealer: %{active: true} = non_dealer, dealer: dealer} = game) do
@@ -151,6 +154,7 @@ defmodule Cribbex.PeggingPhaseHandler do
       | non_dealer: %{non_dealer | said_go: true, active: false},
         dealer: %{dealer | active: true}
     }
+    |> Notifier.add_notification(:non_dealer, "go")
   end
 
   defp maybe_say_go(true, _game), do: :noop
@@ -175,7 +179,7 @@ defmodule Cribbex.PeggingPhaseHandler do
        ) do
     case hit_thirty_one?(game) do
       true -> game
-      false -> ScoreAdder.add_points(game, :dealer, 1)
+      false -> ScoreAdder.add_points(game, :dealer, 1, "go")
     end
   end
 
@@ -187,7 +191,7 @@ defmodule Cribbex.PeggingPhaseHandler do
        ) do
     case hit_thirty_one?(game) do
       true -> game
-      false -> ScoreAdder.add_points(game, :non_dealer, 1)
+      false -> ScoreAdder.add_points(game, :non_dealer, 1, "go")
     end
   end
 
@@ -243,12 +247,14 @@ defmodule Cribbex.PeggingPhaseHandler do
           dealer
           | active: false,
             said_go: false,
+            notifications: [],
             cards: reassign_cards(all_played_cards, dealer_name)
         },
         non_dealer: %{
           non_dealer
           | active: false,
             said_go: false,
+            notifications: [],
             cards: reassign_cards(all_played_cards, non_dealer_name)
         },
         active_played_cards: [],
