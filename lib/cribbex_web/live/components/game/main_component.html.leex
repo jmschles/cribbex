@@ -6,7 +6,7 @@
 
   <%= case @game_data.phase do %>
     <%= phase when phase in [:discard, :pegging] -> %>
-      <%= live_component @socket, CribbexWeb.Game.PeggingComponent, active_played_cards: @game_data.active_played_cards, inactive_played_cards: @game_data.inactive_played_cards %>
+      <%= live_component @socket, CribbexWeb.Game.PeggingComponent, active_played_cards: @game_data.active_played_cards, inactive_played_cards: @game_data.inactive_played_cards, phase: @game_data.phase %>
       <%= live_component @socket, CribbexWeb.Game.PlayerCardsComponent, data: player_data(@game_data, @name), game_id: @game_data.id, game_phase: @game_data.phase %>
       <%= live_component @socket, CribbexWeb.Game.OpponentCardsComponent, data: opponent_data(@game_data, @name) %>
     <% :scoring -> %>

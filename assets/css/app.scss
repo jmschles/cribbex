@@ -338,23 +338,38 @@ $red: #CB2133;
 
 .scoring-header {
   grid-area: opponent_cards;
+  text-align: center;
+  h3 {
+    padding-top: 20%;
+  }
 }
 
 .hand-score {
   grid-area: my_cards;
+  text-align: center;
+  p {
+    margin-bottom: 0;
+  }
+  button {
+    margin-top: 5%;
+    .active {
+      background-color: $blue;
+    }
+    .disabled {
+      color: #606c76;
+    }
+  }
 }
 
 .scored-hand {
   grid-area: pegging;
-}
-
-.score-hand div {
-  padding-top: 20%;
-}
-
-.scored-hand .card {
-  height: 40%;
-  width: 20%;
+  div {
+    padding-top: 20%;
+    .card {
+      height: 40%;
+      width: 20%;
+    }
+  }
 }
 
 .card {
@@ -462,6 +477,7 @@ $red: #CB2133;
 
 /* PEGGING */
 .image-stack {
+  float: left;
   padding-top: 20%;
 }
 
@@ -470,21 +486,18 @@ $red: #CB2133;
   height: 45%;
 }
 
+.tally {
+  float: right;
+  padding-top: 30%;
+  padding-right: 8%;
+}
+
 @for $i from 0 through 7 {
   .image-layer-#{$i} {
     position: absolute;
-    left: $i * 10%;
+    left: $i * 8%;
     z-index: $i + 1;
   }
-}
-
-/* CHAT */
-.chat ul {
-
-}
-
-.chat li {
-
 }
 
 /* DECK */

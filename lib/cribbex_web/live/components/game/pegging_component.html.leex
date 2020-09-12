@@ -8,4 +8,9 @@
       <img class="card image-layer-<%= i + length(@inactive_played_cards) %>" src="<%= CribbexWeb.Helpers.card_image_path(played_card.card) %>">
     <% end) %>
   </div>
+  <div class="tally">
+    <%= if @phase == :pegging do %>
+      <h3><%= tally(@active_played_cards) %></h3>
+    <% end %>
+  </div>
 </section>

@@ -9,12 +9,13 @@
   </div>
 </section>
 <section class="hand-score">
-  <ul>
-    <%= for {key, score} <- @scoring_data.breakdown do %>
-      <li>
-        <strong><%= key %></strong>: <%= score %>
-      </li>
-    <% end %>
-  </ul>
-  <button phx-click="game:ready" phx-value-game-id="<%= @game_id %>" "<%= if @player_data.ready, do: "disabled" %>">Ready</button>
+  <p>
+    <%= @scoring_data.breakdown |> Enum.reject(fn {key, _} -> key == :total end) |> Enum.map(fn {k, v} -> "#{k}: #{v}" end) |> Enum.join(", ") %>
+  </p>
+  <p>
+    <strong>total: <%= @scoring_data.breakdown.total %></strong>
+  </p>
+  <p>
+    <button class="<%= button_class(@player_data) %>" phx-click="game:ready" phx-value-game-id="<%= @game_id %>">Ready</button>
+  </p>
 </section>

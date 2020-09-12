@@ -1,5 +1,5 @@
 defmodule CribbexWeb.ChatHandler do
-  import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3]
+  import Phoenix.LiveView.Utils, only: [clear_flash: 1, put_flash: 3, assign: 3]
 
   alias Cribbex.GameSupervisor
   alias Cribbex.Models.Message
@@ -15,7 +15,9 @@ defmodule CribbexWeb.ChatHandler do
 
       %Message{} = message ->
         broadcast_message(message, channel)
-        {:noreply, assign(socket, :messages, add_and_truncate(message, messages))}
+
+        {:noreply,
+         socket |> clear_flash() |> assign(:messages, add_and_truncate(message, messages))}
     end
   end
 
