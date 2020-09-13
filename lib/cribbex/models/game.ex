@@ -5,9 +5,11 @@ defmodule Cribbex.Models.Game do
   defdelegate start_hand(game), to: Cribbex.DiscardPhaseHandler
   defdelegate handle_discard(game, card_code, name), to: Cribbex.DiscardPhaseHandler
 
-  defdelegate handle_play(game, card_code, name), to: Cribbex.PeggingPhaseHandler
+  defdelegate handle_play(game, card_code, name, live_pid), to: Cribbex.PeggingPhaseHandler
   defdelegate handle_go_check(game, live_pid), to: Cribbex.PeggingPhaseHandler
   defdelegate handle_go_followup(game), to: Cribbex.PeggingPhaseHandler
+  defdelegate handle_thirty_one_reset(game), to: Cribbex.PeggingPhaseHandler
+  defdelegate handle_complete_pegging_phase(game), to: Cribbex.PeggingPhaseHandler
 
   defdelegate initiate_scoring_phase(game), to: Cribbex.ScoringPhaseHandler
   defdelegate set_ready(game, name), to: Cribbex.ScoringPhaseHandler

@@ -11,13 +11,15 @@ defmodule Cribbex.PeggingPhaseHandler do
     ScoreAdder
   }
 
-  def handle_play(game, card_code, name) do
+  @snooze_interval 1000
+
+  def handle_play(game, card_code, name, live_pid) do
     game
     |> validate_play(card_code, name)
     |> perform_play(card_code, name)
     |> check_for_scoring()
-    |> check_for_thirty_one_reset()
-    |> check_for_phase_completion()
+    |> check_for_thirty_one_reset(live_pid)
+    |> check_for_phase_completion(live_pid)
     |> reset_error_state()
   end
 
@@ -28,9 +30,14 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> maybe_initiate_go_followup(live_pid)
   end
 
-  def handle_go_followup(game) do
+  def handle_go_followup(game), do: do_go_followup(game)
+
+  def handle_thirty_one_reset(game), do: reset(game)
+
+  def handle_complete_pegging_phase(game) do
     game
-    |> do_go_followup()
+    |> complete_phase()
+    |> Game.initiate_scoring_phase()
   end
 
   # it wasn't your turn
@@ -99,25 +106,26 @@ defmodule Cribbex.PeggingPhaseHandler do
     PegScoring.score_play(game)
   end
 
-  defp check_for_thirty_one_reset(%{error: true} = game), do: game
+  defp check_for_thirty_one_reset(%{error: true} = game, _live_pid), do: game
 
-  defp check_for_thirty_one_reset(game) do
-    case hit_thirty_one?(game) do
-      true -> reset(game)
-      false -> game
+  defp check_for_thirty_one_reset(game, live_pid) do
+    if hit_thirty_one?(game) do
+      Process.send_after(live_pid, "game:thirty_one_reset", @snooze_interval)
     end
-  end
 
-  defp check_for_phase_completion(%{error: true} = game), do: game
-
-  defp check_for_phase_completion(%{dealer: %{cards: []}, non_dealer: %{cards: []}} = game) do
     game
-    |> maybe_award_final_go()
-    |> complete_phase()
-    |> Game.initiate_scoring_phase()
   end
 
-  defp check_for_phase_completion(game), do: game
+  defp check_for_phase_completion(%{error: true} = game, _live_pid), do: game
+
+  defp check_for_phase_completion(%{dealer: %{cards: []}, non_dealer: %{cards: []}} = game, live_pid) do
+    Process.send_after(live_pid, "game:complete_pegging_phase", @snooze_interval * 2)
+
+    game
+    # |> maybe_award_final_go()
+  end
+
+  defp check_for_phase_completion(game, _live_pid), do: game
 
   defp reset_error_state(game), do: %{game | error: nil}
 
@@ -157,7 +165,6 @@ defmodule Cribbex.PeggingPhaseHandler do
 
   defp maybe_initiate_go_followup(:noop, _live_pid), do: :noop
 
-  @snooze_interval 1000
   defp maybe_initiate_go_followup(game, live_pid) do
     Process.send_after(live_pid, "game:go_followup", @snooze_interval)
     game
@@ -179,10 +186,14 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> maybe_reset()
   end
 
+  defp do_go_followup(game), do: game
+
   defp maybe_reset(game) do
     case can_play?(game) do
       true -> game
-      false -> reset(game)
+      false ->
+        maybe_say_go(false, game)
+        |> reset()
     end
   end
 

@@ -33,8 +33,8 @@ defmodule Cribbex.GameServer do
     {:reply, updated_state, updated_state}
   end
 
-  def handle_call({:play_card, card_code, name}, _from, game_state) do
-    updated_state = Game.handle_play(game_state, card_code, name)
+  def handle_call({:play_card, card_code, name, live_pid}, _from, game_state) do
+    updated_state = Game.handle_play(game_state, card_code, name, live_pid)
     {:reply, updated_state, updated_state}
   end
 
@@ -45,8 +45,8 @@ defmodule Cribbex.GameServer do
     end
   end
 
-  def handle_call(:go_followup, _from, game_state) do
-    updated_state = Game.handle_go_followup(game_state)
+  def handle_call(action, _from, game_state) when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
+    updated_state = apply(Game, :"handle_#{action}", [game_state])
     {:reply, updated_state, updated_state}
   end
 

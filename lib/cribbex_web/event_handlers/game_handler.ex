@@ -27,26 +27,37 @@ defmodule CribbexWeb.GameHandler do
         %{assigns: %{name: name}} = socket
       ) do
     updated_game_data =
-      GameSupervisor.perform_action(:play_card, game_id, %{card_code: card_code, name: name})
+      GameSupervisor.perform_action(:play_card, game_id, %{
+        card_code: card_code,
+        name: name,
+        live_pid: self()
+      })
 
     broadcast_state_update(updated_game_data)
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
   def handle_event("ready", %{"game-id" => game_id}, %{assigns: %{name: name}} = socket) do
-    updated_game_data =
-      GameSupervisor.perform_action(:ready, game_id, %{name: name})
+    updated_game_data = GameSupervisor.perform_action(:ready, game_id, %{name: name})
 
     broadcast_state_update(updated_game_data)
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
-  def handle_info("state_update", %{dealer: %{name: name, active: true}, phase: :pegging} = updated_game_data, %{assigns: %{name: name}} = socket) do
+  def handle_info(
+        "state_update",
+        %{dealer: %{name: name, active: true}, phase: :pegging} = updated_game_data,
+        %{assigns: %{name: name}} = socket
+      ) do
     send(self(), "game:check_for_go")
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
-  def handle_info("state_update", %{non_dealer: %{name: name, active: true}, phase: :pegging} = updated_game_data, %{assigns: %{name: name}} = socket) do
+  def handle_info(
+        "state_update",
+        %{non_dealer: %{name: name, active: true}, phase: :pegging} = updated_game_data,
+        %{assigns: %{name: name}} = socket
+      ) do
     send(self(), "game:check_for_go")
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
@@ -59,14 +70,16 @@ defmodule CribbexWeb.GameHandler do
     case GameSupervisor.perform_action(:check_for_go, game_id, %{live_pid: self()}) do
       :noop ->
         {:noreply, socket}
+
       updated_game_data ->
         broadcast_state_update(updated_game_data)
         {:noreply, assign(socket, :game_data, updated_game_data)}
     end
   end
 
-  def handle_info("go_followup", %{assigns: %{game_data: %{id: game_id}}} = socket) do
-    updated_game_data = GameSupervisor.perform_action(:go_followup, game_id)
+  def handle_info(action, %{assigns: %{game_data: %{id: game_id}}} = socket)
+      when action in ~w[go_followup thirty_one_reset complete_pegging_phase] do
+    updated_game_data = GameSupervisor.perform_action(String.to_atom(action), game_id)
     broadcast_state_update(updated_game_data)
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
