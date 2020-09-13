@@ -11,7 +11,7 @@ defmodule Cribbex.PeggingPhaseHandler do
     ScoreAdder
   }
 
-  @snooze_interval 1000
+  @snooze_interval 1500
 
   def handle_play(game, card_code, name, live_pid) do
     game
@@ -119,10 +119,8 @@ defmodule Cribbex.PeggingPhaseHandler do
   defp check_for_phase_completion(%{error: true} = game, _live_pid), do: game
 
   defp check_for_phase_completion(%{dealer: %{cards: []}, non_dealer: %{cards: []}} = game, live_pid) do
-    Process.send_after(live_pid, "game:complete_pegging_phase", @snooze_interval * 2)
-
+    Process.send_after(live_pid, "game:complete_pegging_phase", @snooze_interval)
     game
-    # |> maybe_award_final_go()
   end
 
   defp check_for_phase_completion(game, _live_pid), do: game
@@ -216,32 +214,6 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> Enum.map(& &1.card.value)
     |> Enum.sum()
   end
-
-  defp maybe_award_final_go(
-         %{
-           dealer: %{name: name},
-           active_played_cards: [%PlayedCard{played_by: name} | _rest]
-         } = game
-       ) do
-    case hit_thirty_one?(game) do
-      true -> game
-      false -> ScoreAdder.add_points(game, :dealer, 1, "go")
-    end
-  end
-
-  defp maybe_award_final_go(
-         %{
-           non_dealer: %{name: name},
-           active_played_cards: [%PlayedCard{played_by: name} | _rest]
-         } = game
-       ) do
-    case hit_thirty_one?(game) do
-      true -> game
-      false -> ScoreAdder.add_points(game, :non_dealer, 1, "go")
-    end
-  end
-
-  defp maybe_award_final_go(game), do: game
 
   defp reset(
          %{

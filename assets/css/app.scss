@@ -166,7 +166,9 @@ ul {
 
 $light_gray: #eee;
 $blue: #3333FF;
+$bright_blue: #1291f8;
 $red: #CB2133;
+$bright_red: #FE4355;
 
 .container {
   margin: 0 auto;
@@ -546,12 +548,14 @@ $red: #CB2133;
 }
 
 .dot.dot-blue {
-  background-color: $blue;
+  background-color: $bright_blue;
+  border: 1px solid $blue;
   width: 8px;
   height: 8px;
 }
 .dot.dot-red {
-  background-color: $red;
+  background-color: $bright_red;
+  border: 1px solid $red;
   width: 8px;
   height: 8px;
 }
