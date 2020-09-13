@@ -93,12 +93,16 @@ defmodule Cribbex.PeggingPhaseHandler do
     PegScoring.score_play(game)
   end
 
+  defp check_for_thirty_one_reset(%{error: true} = game), do: game
+
   defp check_for_thirty_one_reset(game) do
     case hit_thirty_one?(game) do
       true -> reset(game)
       false -> game
     end
   end
+
+  defp check_for_phase_completion(%{error: true} = game), do: game
 
   defp check_for_phase_completion(%{dealer: %{cards: []}, non_dealer: %{cards: []}} = game) do
     game
