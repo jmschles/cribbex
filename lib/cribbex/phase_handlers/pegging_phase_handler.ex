@@ -21,10 +21,16 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> reset_error_state()
   end
 
-  def handle_go_check(game) do
+  def handle_go_check(game, live_pid) do
     game
     |> can_play?()
     |> maybe_say_go(game)
+    |> maybe_initiate_go_followup(live_pid)
+  end
+
+  def handle_go_followup(game) do
+    game
+    |> do_go_followup()
   end
 
   # it wasn't your turn
@@ -115,14 +121,6 @@ defmodule Cribbex.PeggingPhaseHandler do
 
   defp reset_error_state(game), do: %{game | error: nil}
 
-  defp can_play?(%{dealer: %{active: true, cards: cards}} = game) do
-    Enum.any?(cards, &valid_play?(game, &1.code))
-  end
-
-  defp can_play?(%{non_dealer: %{active: true, cards: cards}} = game) do
-    Enum.any?(cards, &valid_play?(game, &1.code))
-  end
-
   # both said go, point awarded
   defp maybe_say_go(
          false,
@@ -130,7 +128,6 @@ defmodule Cribbex.PeggingPhaseHandler do
        ) do
     game
     |> ScoreAdder.add_points(:dealer, 1, "go")
-    |> reset()
   end
 
   defp maybe_say_go(
@@ -139,31 +136,65 @@ defmodule Cribbex.PeggingPhaseHandler do
        ) do
     game
     |> ScoreAdder.add_points(:non_dealer, 1, "go")
-    |> reset()
   end
 
   # player can't go but opponent can
-  defp maybe_say_go(false, %{dealer: %{active: true} = dealer, non_dealer: non_dealer} = game) do
-    %{
-      game
-      | dealer: %{dealer | said_go: true, active: false},
-        non_dealer: %{non_dealer | active: true}
-    }
+  defp maybe_say_go(false, %{dealer: %{active: true} = dealer} = game) do
+    %{game | dealer: %{dealer | said_go: true, active: false}}
     |> Notifier.add_notification(:dealer, "go")
   end
 
-  defp maybe_say_go(false, %{non_dealer: %{active: true} = non_dealer, dealer: dealer} = game) do
-    %{
-      game
-      | non_dealer: %{non_dealer | said_go: true, active: false},
-        dealer: %{dealer | active: true}
-    }
+  defp maybe_say_go(false, %{non_dealer: %{active: true} = non_dealer} = game) do
+    %{game | non_dealer: %{non_dealer | said_go: true, active: false}}
     |> Notifier.add_notification(:non_dealer, "go")
   end
 
+  # try to prevent a delay if I've already said go... needs double check
+  defp maybe_say_go(false, %{non_dealer: %{said_go: true}}), do: :noop
+  defp maybe_say_go(false, %{dealer: %{said_go: true}}), do: :noop
+
   defp maybe_say_go(true, _game), do: :noop
 
+  defp maybe_initiate_go_followup(:noop, _live_pid), do: :noop
+
+  @snooze_interval 1000
+  defp maybe_initiate_go_followup(game, live_pid) do
+    Process.send_after(live_pid, "game:go_followup", @snooze_interval)
+    game
+  end
+
+  defp do_go_followup(%{dealer: %{said_go: true}, non_dealer: %{said_go: true}} = game) do
+    reset(game)
+  end
+
+  defp do_go_followup(
+         %{dealer: %{said_go: true}, non_dealer: %{said_go: false} = non_dealer} = game
+       ) do
+    %{game | non_dealer: %{non_dealer | active: true}}
+    |> maybe_reset()
+  end
+
+  defp do_go_followup(%{non_dealer: %{said_go: true}, dealer: %{said_go: false} = dealer} = game) do
+    %{game | dealer: %{dealer | active: true}}
+    |> maybe_reset()
+  end
+
+  defp maybe_reset(game) do
+    case can_play?(game) do
+      true -> game
+      false -> reset(game)
+    end
+  end
+
   # helpers
+
+  defp can_play?(%{dealer: %{active: true, cards: cards}} = game) do
+    Enum.any?(cards, &valid_play?(game, &1.code))
+  end
+
+  defp can_play?(%{non_dealer: %{active: true, cards: cards}} = game) do
+    Enum.any?(cards, &valid_play?(game, &1.code))
+  end
 
   defp valid_play?(game, card_code) do
     current_count(game) + Card.get_value_by_card_code(card_code) <= 31

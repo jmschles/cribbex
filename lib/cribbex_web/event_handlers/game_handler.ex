@@ -56,13 +56,19 @@ defmodule CribbexWeb.GameHandler do
   end
 
   def handle_info("check_for_go", %{assigns: %{game_data: %{id: game_id}}} = socket) do
-    case GameSupervisor.perform_action(:check_for_go, game_id) do
+    case GameSupervisor.perform_action(:check_for_go, game_id, %{live_pid: self()}) do
       :noop ->
         {:noreply, socket}
       updated_game_data ->
         broadcast_state_update(updated_game_data)
         {:noreply, assign(socket, :game_data, updated_game_data)}
     end
+  end
+
+  def handle_info("go_followup", %{assigns: %{game_data: %{id: game_id}}} = socket) do
+    updated_game_data = GameSupervisor.perform_action(:go_followup, game_id)
+    broadcast_state_update(updated_game_data)
+    {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
   def broadcast_state_update(%{id: game_id} = game_data) do
