@@ -23,7 +23,8 @@ defmodule CribbexWeb.PresenceHandler do
         %{player: joined_player, topic: "lobby"},
         %{assigns: %{players: players}} = socket
       ) do
-    {:noreply, assign(socket, :players, [joined_player | players] |> Enum.sort())}
+    updated_players = [joined_player | players] |> Enum.uniq() |> Enum.sort()
+    {:noreply, assign(socket, :players, updated_players)}
   end
 
   def handle_info(
@@ -37,8 +38,8 @@ defmodule CribbexWeb.PresenceHandler do
      |> assign(:invitations, invitations -- [left_player])}
   end
 
-  def handle_info("leave", %{topic: "game:" <> _game_id}, socket) do
-    # TODO: someone dipped or disconnected, boot remaining player(s)
+  def handle_info("leave", %{topic: "game:" <> game_id, player: left_player}, socket) do
+    CribbexWeb.Endpoint.broadcast("game:" <> game_id, "game:disconnect", %{name: left_player})
     {:noreply, socket}
   end
 

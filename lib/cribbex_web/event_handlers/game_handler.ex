@@ -1,5 +1,5 @@
 defmodule CribbexWeb.GameHandler do
-  import Phoenix.LiveView.Utils, only: [assign: 3]
+  import Phoenix.LiveView.Utils, only: [assign: 3, put_flash: 3]
 
   alias Cribbex.{
     GameSupervisor,
@@ -86,11 +86,27 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
-  def handle_info("end_game", _payload, %{assigns: %{game_data: game_data} = assigns} = socket) do
+  def handle_info("end_game", _payload, %{assigns: %{game_data: game_data}} = socket) do
     Process.send_after(self(), "game:game_over", 3000)
     Process.send_after(self(), "game:boot_to_lobby", 10000)
     {:noreply, assign(socket, :game_data, %{game_data | game_ending: true})}
   end
+
+  def handle_info(
+        "disconnect",
+        %{name: name},
+        %{assigns: %{game_data: %{id: game_id, game_ending: false} = game_data}} = socket
+      ) do
+    GameSupervisor.kill_game(game_id)
+    Process.send_after(self(), "game:boot_to_lobby", 10000)
+
+    {:noreply,
+     socket
+     |> put_flash(:error, "#{name} disconnected, game ending...")
+     |> assign(:game_data, %{game_data | game_ending: true})}
+  end
+
+  def handle_info("disconnect", _payload, socket), do: {:noreply, socket}
 
   def handle_info(event, %{assigns: %{game_data: %{game_ending: true}}} = socket)
       when event not in ~w[game_over boot_to_lobby] do

@@ -2,6 +2,8 @@ defmodule Cribbex.GameServer do
   use GenServer
   alias Cribbex.Models.Game
 
+  require Logger
+
   # TODO: implement an idle timeout
 
   def start_link(initial_game_state) do
@@ -62,7 +64,8 @@ defmodule Cribbex.GameServer do
   end
 
   @impl true
-  def handle_info(:die, game_state) do
+  def handle_info(:die, %{id: id} = game_state) do
+    Logger.info("Game #{id} shutting down")
     {:stop, :normal, game_state}
   end
 end
