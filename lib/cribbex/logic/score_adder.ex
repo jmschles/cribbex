@@ -23,12 +23,12 @@ defmodule Cribbex.Logic.ScoreAdder do
     |> check_win_condition()
   end
 
-  defp check_win_condition(%{dealer: %{score: score, name: name}} = game_data) when score > 120 do
+  defp check_win_condition(%{dealer: %{score: score, name: name}} = game_data) when score > 10 do
     %{game_data | winner: name}
   end
 
   defp check_win_condition(%{non_dealer: %{score: score, name: name}} = game_data)
-       when score > 120 do
+       when score > 10 do
     %{game_data | winner: name}
   end
 

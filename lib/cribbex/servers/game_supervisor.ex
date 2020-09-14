@@ -24,6 +24,11 @@ defmodule Cribbex.GameSupervisor do
     {:ok, initial_game_data}
   end
 
+  def kill_game(game_id) do
+    find_game(game_id)
+    |> GenServer.cast(:kill)
+  end
+
   def perform_action(action, game_id) do
     find_game(game_id)
     |> do_action(action)

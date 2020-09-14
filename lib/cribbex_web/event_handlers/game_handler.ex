@@ -1,7 +1,15 @@
 defmodule CribbexWeb.GameHandler do
   import Phoenix.LiveView.Utils, only: [assign: 3]
 
-  alias Cribbex.GameSupervisor
+  alias Cribbex.{
+    GameSupervisor,
+    Helpers
+  }
+
+  def handle_event(event, _payload, %{assigns: %{game_data: %{game_ending: true}}} = socket)
+      when event not in ~w[game_over boot_to_lobby] do
+    {:noreply, socket}
+  end
 
   def handle_event("start", %{"game-id" => game_id}, socket) do
     updated_game_data = GameSupervisor.perform_action(:start_game, game_id)
@@ -44,6 +52,18 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
+  def handle_info(event, _payload, %{assigns: %{game_data: %{game_ending: true}}} = socket)
+      when event not in ~w[game_over boot_to_lobby] do
+    {:noreply, socket}
+  end
+
+  def handle_info("state_update", %{winner: winner, id: game_id} = updated_game_data, socket)
+      when not is_nil(winner) do
+    CribbexWeb.Endpoint.broadcast("game:" <> game_id, "game:end_game", %{})
+    GameSupervisor.kill_game(game_id)
+    {:noreply, assign(socket, :game_data, updated_game_data)}
+  end
+
   def handle_info(
         "state_update",
         %{dealer: %{name: name, active: true}, phase: :pegging} = updated_game_data,
@@ -66,6 +86,17 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
+  def handle_info("end_game", _payload, %{assigns: %{game_data: game_data} = assigns} = socket) do
+    Process.send_after(self(), "game:game_over", 3000)
+    Process.send_after(self(), "game:boot_to_lobby", 10000)
+    {:noreply, assign(socket, :game_data, %{game_data | game_ending: true})}
+  end
+
+  def handle_info(event, %{assigns: %{game_data: %{game_ending: true}}} = socket)
+      when event not in ~w[game_over boot_to_lobby] do
+    {:noreply, socket}
+  end
+
   def handle_info("check_for_go", %{assigns: %{game_data: %{id: game_id}}} = socket) do
     case GameSupervisor.perform_action(:check_for_go, game_id, %{live_pid: self()}) do
       :noop ->
@@ -84,7 +115,23 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
-  def broadcast_state_update(%{id: game_id} = game_data) do
+  def handle_info("game_over", %{assigns: %{game_data: game_data}} = socket) do
+    updated_game_data = %{game_data | phase: :over}
+    {:noreply, assign(socket, :game_data, updated_game_data)}
+  end
+
+  def handle_info("boot_to_lobby", %{assigns: %{name: name, game_data: %{id: game_id}}} = socket) do
+    return_to_lobby(socket, name, game_id)
+  end
+
+  defp broadcast_state_update(%{id: game_id} = game_data) do
     CribbexWeb.Endpoint.broadcast_from(self(), "game:#{game_id}", "game:state_update", game_data)
+  end
+
+  defp return_to_lobby(socket, name, game_id) do
+    socket
+    |> Helpers.unsubscribe_from_game(game_id, name)
+    |> assign(:game_data, nil)
+    |> CribbexWeb.LoginHandler.login(name)
   end
 end

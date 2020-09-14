@@ -1,6 +1,8 @@
 <%= case @game_data.phase do %>
   <%= :pregame -> %>
     <%= live_component @socket, CribbexWeb.Game.PregameComponent, game_id: @game_data.id, opponent: Enum.reject(@game_data.player_names, & &1 == @name) %>
+  <% :over -> %>
+    <%= live_component @socket, CribbexWeb.Game.GameOverComponent, winner: @game_data.winner %>
   <% _phase -> %>
     <%= live_component @socket, CribbexWeb.Game.MainComponent, name: @name, game_data: @game_data, messages: @messages %>
 <% end %>

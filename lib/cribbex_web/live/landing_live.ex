@@ -7,9 +7,9 @@ defmodule CribbexWeb.LandingLive do
     {:ok, Cribbex.Helpers.discard_phase_test(socket)}
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, status: :signin)}
-  end
+  # def mount(_params, _session, socket) do
+  #   {:ok, assign(socket, status: :signin)}
+  # end
 
   @impl true
   def handle_event("login", payload, socket) do
@@ -26,11 +26,6 @@ defmodule CribbexWeb.LandingLive do
 
   def handle_event("chat:" <> event, payload, socket) do
     CribbexWeb.ChatHandler.handle_event(event, payload, socket)
-  end
-
-  # TODO: decide what to do with this
-  def handle_event("back-to-lobby", _params, socket) do
-    {:noreply, assign(socket, status: :idle)}
   end
 
   @impl true

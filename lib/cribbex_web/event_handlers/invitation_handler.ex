@@ -1,6 +1,8 @@
 defmodule CribbexWeb.InvitationHandler do
   import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3, clear_flash: 1]
 
+  alias Cribbex.Helpers
+
   def handle_event("sent", %{"to" => invitee}, socket) do
     CribbexWeb.Endpoint.broadcast_from(self(), "player:#{invitee}", "invitation:received", %{
       from: socket.assigns.name
@@ -87,13 +89,8 @@ defmodule CribbexWeb.InvitationHandler do
   end
 
   defp subscribe_to_game(%{assigns: %{name: me}} = socket, game_id) do
-    topic = topic_name(game_id)
-
-    CribbexWeb.Endpoint.subscribe(topic)
-    Cribbex.Presence.track(self(), topic, me, %{topic: topic})
-
     socket
+    |> Helpers.unsubscribe_from_lobby(me)
+    |> Helpers.subscribe_to_game(game_id, me)
   end
-
-  defp topic_name(game_id), do: "game:" <> game_id
 end

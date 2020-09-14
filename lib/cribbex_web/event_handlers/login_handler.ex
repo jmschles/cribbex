@@ -17,7 +17,7 @@ defmodule CribbexWeb.LoginHandler do
   # helpers
 
   @lobby_topic "lobby"
-  defp login(socket, name) do
+  def login(socket, name) do
     CribbexWeb.Endpoint.subscribe(@lobby_topic)
     Cribbex.Presence.track(self(), @lobby_topic, name, %{topic: @lobby_topic})
     players = Cribbex.Presence.list(@lobby_topic) |> Map.keys()

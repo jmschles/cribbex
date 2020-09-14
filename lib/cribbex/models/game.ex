@@ -27,6 +27,7 @@ defmodule Cribbex.Models.Game do
     :non_dealer,
     :flip_card,
     :winner,
+    game_ending: false,
     pegging_tally: 0,
     deck: Deck.build(),
     scoring_data: %{},

@@ -54,4 +54,15 @@ defmodule Cribbex.GameServer do
     updated_state = Game.set_ready(game_state, name)
     {:reply, updated_state, updated_state}
   end
+
+  @impl true
+  def handle_cast(:kill, game_state) do
+    Process.send_after(self(), :die, 30000)
+    {:noreply, game_state}
+  end
+
+  @impl true
+  def handle_info(:die, game_state) do
+    {:stop, :normal, game_state}
+  end
 end
