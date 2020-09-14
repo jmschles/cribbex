@@ -36,6 +36,7 @@ defmodule Cribbex.PeggingPhaseHandler do
 
   def handle_complete_pegging_phase(game) do
     game
+    |> maybe_award_final_go()
     |> complete_phase()
     |> Game.initiate_scoring_phase()
   end
@@ -291,4 +292,30 @@ defmodule Cribbex.PeggingPhaseHandler do
     |> Enum.map(& &1.card)
     |> Card.sort()
   end
+
+  defp maybe_award_final_go(
+      %{
+        dealer: %{name: name},
+        active_played_cards: [%PlayedCard{played_by: name} | _rest]
+      } = game
+    ) do
+    case hit_thirty_one?(game) do
+      true -> game
+      false -> ScoreAdder.add_points(game, :dealer, 1, "go")
+    end
+  end
+
+  defp maybe_award_final_go(
+      %{
+        non_dealer: %{name: name},
+        active_played_cards: [%PlayedCard{played_by: name} | _rest]
+      } = game
+    ) do
+    case hit_thirty_one?(game) do
+      true -> game
+      false -> ScoreAdder.add_points(game, :non_dealer, 1, "go")
+    end
+  end
+
+  defp maybe_award_final_go(game), do: game
 end
