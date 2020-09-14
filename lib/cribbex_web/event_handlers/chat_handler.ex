@@ -1,7 +1,6 @@
 defmodule CribbexWeb.ChatHandler do
   import Phoenix.LiveView.Utils, only: [clear_flash: 1, put_flash: 3, assign: 3]
 
-  alias Cribbex.GameSupervisor
   alias Cribbex.Models.Message
 
   def handle_event(
