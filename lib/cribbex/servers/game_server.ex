@@ -4,6 +4,7 @@ defmodule Cribbex.GameServer do
 
   require Logger
 
+  @idle_timeout 30 * 60 * 1000
   # TODO: implement an idle timeout
 
   def start_link(initial_game_state) do
@@ -17,44 +18,44 @@ defmodule Cribbex.GameServer do
 
   @impl true
   def init(initial_game_state) do
-    {:ok, initial_game_state}
+    {:ok, initial_game_state, @idle_timeout}
   end
 
   @impl true
   def handle_call(:state, _from, game_state) do
-    {:reply, game_state, game_state}
+    {:reply, game_state, game_state, @idle_timeout}
   end
 
   def handle_call(:new_hand, _from, game_state) do
     updated_state = Game.start_hand(game_state)
-    {:reply, updated_state, updated_state}
+    {:reply, updated_state, updated_state, @idle_timeout}
   end
 
   def handle_call({:discard, card_code, name}, _from, game_state) do
     updated_state = Game.handle_discard(game_state, card_code, name)
-    {:reply, updated_state, updated_state}
+    {:reply, updated_state, updated_state, @idle_timeout}
   end
 
   def handle_call({:play_card, card_code, name, live_pid}, _from, game_state) do
     updated_state = Game.handle_play(game_state, card_code, name, live_pid)
-    {:reply, updated_state, updated_state}
+    {:reply, updated_state, updated_state, @idle_timeout}
   end
 
   def handle_call({:check_for_go, live_pid}, _from, game_state) do
     case Game.handle_go_check(game_state, live_pid) do
-      :noop -> {:reply, :noop, game_state}
-      updated_game_state ->  {:reply, updated_game_state, updated_game_state}
+      :noop -> {:reply, :noop, game_state, @idle_timeout}
+      updated_game_state ->  {:reply, updated_game_state, updated_game_state, @idle_timeout}
     end
   end
 
   def handle_call(action, _from, game_state) when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
     updated_state = apply(Game, :"handle_#{action}", [game_state])
-    {:reply, updated_state, updated_state}
+    {:reply, updated_state, updated_state, @idle_timeout}
   end
 
   def handle_call({:ready, name}, _from, game_state) do
     updated_state = Game.set_ready(game_state, name)
-    {:reply, updated_state, updated_state}
+    {:reply, updated_state, updated_state, @idle_timeout}
   end
 
   @impl true
@@ -66,6 +67,12 @@ defmodule Cribbex.GameServer do
   @impl true
   def handle_info(:die, %{id: id} = game_state) do
     Logger.info("Game #{id} shutting down")
+    {:stop, :normal, game_state}
+  end
+
+  def handle_info(:timeout, %{id: id} = game_state) do
+    CribbexWeb.Endpoint.broadcast("game:" <> id, "game:boot_to_lobby", %{})
+    Logger.info("Game #{id} hit idle timeout, shutting down")
     {:stop, :normal, game_state}
   end
 end

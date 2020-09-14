@@ -52,6 +52,8 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
 
+  # handle_info/3
+
   def handle_info(event, _payload, %{assigns: %{game_data: %{game_ending: true}}} = socket)
       when event not in ~w[game_over boot_to_lobby] do
     {:noreply, socket}
@@ -81,6 +83,13 @@ defmodule CribbexWeb.GameHandler do
     send(self(), "game:check_for_go")
     {:noreply, assign(socket, :game_data, updated_game_data)}
   end
+
+  def handle_info("boot_to_lobby", _payload, socket) do
+    Process.send_after(self(), "game:boot_to_lobby", 10000)
+    {:noreply, socket |> put_flash(:error, "Game timing out due to inactivity")}
+  end
+
+  # handle_info/2
 
   def handle_info("state_update", updated_game_data, socket) do
     {:noreply, assign(socket, :game_data, updated_game_data)}
