@@ -28,31 +28,44 @@ defmodule Cribbex.ScoringPhaseHandler do
   def set_ready(%{non_dealer: %{name: name, ready: true}} = game_data, name), do: game_data
 
   # other player not ready yet
-  def set_ready(%{dealer: %{name: name, ready: false} = dealer, non_dealer: %{ready: false}} = game_data, name) do
+  def set_ready(
+        %{dealer: %{name: name, ready: false} = dealer, non_dealer: %{ready: false}} = game_data,
+        name
+      ) do
     %{game_data | dealer: %{dealer | ready: true}}
   end
 
-  def set_ready(%{non_dealer: %{name: name, ready: false} = non_dealer, dealer: %{ready: false}} = game_data, name) do
+  def set_ready(
+        %{non_dealer: %{name: name, ready: false} = non_dealer, dealer: %{ready: false}} =
+          game_data,
+        name
+      ) do
     %{game_data | non_dealer: %{non_dealer | ready: true}}
   end
 
   # both players ready
-  def set_ready(%{dealer: %{name: name, ready: false}, non_dealer: %{ready: true}} = game_data, name) do
+  def set_ready(
+        %{dealer: %{name: name, ready: false}, non_dealer: %{ready: true}} = game_data,
+        name
+      ) do
     score_next_hand(game_data)
   end
 
-  def set_ready(%{non_dealer: %{name: name, ready: false}, dealer: %{ready: true}} = game_data, name) do
+  def set_ready(
+        %{non_dealer: %{name: name, ready: false}, dealer: %{ready: true}} = game_data,
+        name
+      ) do
     score_next_hand(game_data)
   end
 
   defp score_next_hand(
-        %{
-          scoring_data: %{hand: :non_dealer},
-          dealer: %{name: name, cards: cards} = dealer,
-          non_dealer: non_dealer,
-          flip_card: flip_card
-        } = game_data
-      ) do
+         %{
+           scoring_data: %{hand: :non_dealer},
+           dealer: %{name: name, cards: cards} = dealer,
+           non_dealer: non_dealer,
+           flip_card: flip_card
+         } = game_data
+       ) do
     score_breakdown = HandScoring.calculate_score(cards, flip_card)
 
     %{
@@ -70,14 +83,14 @@ defmodule Cribbex.ScoringPhaseHandler do
   end
 
   defp score_next_hand(
-        %{
-          scoring_data: %{hand: :dealer},
-          dealer: %{name: name} = dealer,
-          non_dealer: non_dealer,
-          crib: cards,
-          flip_card: flip_card
-        } = game_data
-      ) do
+         %{
+           scoring_data: %{hand: :dealer},
+           dealer: %{name: name} = dealer,
+           non_dealer: non_dealer,
+           crib: cards,
+           flip_card: flip_card
+         } = game_data
+       ) do
     score_breakdown = HandScoring.calculate_score(cards, flip_card, true)
 
     %{
@@ -99,14 +112,14 @@ defmodule Cribbex.ScoringPhaseHandler do
   end
 
   defp complete_phase(
-        %{
-          dealer: %{cards: dealer_cards} = dealer,
-          non_dealer: %{cards: non_dealer_cards} = non_dealer,
-          crib: crib,
-          flip_card: flip_card,
-          deck: deck
-        } = game_data
-      ) do
+         %{
+           dealer: %{cards: dealer_cards} = dealer,
+           non_dealer: %{cards: non_dealer_cards} = non_dealer,
+           crib: crib,
+           flip_card: flip_card,
+           deck: deck
+         } = game_data
+       ) do
     %{
       game_data
       | crib: [],

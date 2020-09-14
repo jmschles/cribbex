@@ -44,11 +44,12 @@ defmodule Cribbex.GameServer do
   def handle_call({:check_for_go, live_pid}, _from, game_state) do
     case Game.handle_go_check(game_state, live_pid) do
       :noop -> {:reply, :noop, game_state, @idle_timeout}
-      updated_game_state ->  {:reply, updated_game_state, updated_game_state, @idle_timeout}
+      updated_game_state -> {:reply, updated_game_state, updated_game_state, @idle_timeout}
     end
   end
 
-  def handle_call(action, _from, game_state) when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
+  def handle_call(action, _from, game_state)
+      when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
     updated_state = apply(Game, :"handle_#{action}", [game_state])
     {:reply, updated_state, updated_state, @idle_timeout}
   end

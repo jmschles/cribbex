@@ -21,7 +21,7 @@ defmodule Cribbex.Models.Card do
 
   def get_value_by_card_code(card_code) do
     types()
-    |> Enum.find(& String.first(card_code) == String.first(&1))
+    |> Enum.find(&(String.first(card_code) == String.first(&1)))
     |> value()
   end
 

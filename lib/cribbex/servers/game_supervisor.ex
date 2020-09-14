@@ -47,7 +47,8 @@ defmodule Cribbex.GameSupervisor do
     GenServer.call(game_pid, :state)
   end
 
-  def do_action(game_pid, action) when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
+  def do_action(game_pid, action)
+      when action in [:go_followup, :thirty_one_reset, :complete_pegging_phase] do
     GenServer.call(game_pid, action)
   end
 

@@ -19,13 +19,15 @@ defmodule CribbexWeb.Game.BoardComponent do
     end
   end
 
-  def peg?(%{score: current_score, previous_score: previous_score}, column, row) when column in [0, 3] do
+  def peg?(%{score: current_score, previous_score: previous_score}, column, row)
+      when column in [0, 3] do
     [current_score, previous_score]
-    |> Enum.any?(& &1 in [29 - row + 1, 29 - row + 61])
+    |> Enum.any?(&(&1 in [29 - row + 1, 29 - row + 61]))
   end
 
-  def peg?(%{score: current_score, previous_score: previous_score}, column, row) when column in [1, 2] do
+  def peg?(%{score: current_score, previous_score: previous_score}, column, row)
+      when column in [1, 2] do
     [current_score, previous_score]
-    |> Enum.any?(& &1 in [row + 31, row + 91])
+    |> Enum.any?(&(&1 in [row + 31, row + 91]))
   end
 end

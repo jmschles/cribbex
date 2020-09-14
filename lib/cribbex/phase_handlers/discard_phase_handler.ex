@@ -38,9 +38,10 @@ defmodule Cribbex.DiscardPhaseHandler do
   end
 
   defp shuffle_deck(%{deck: deck} = game) do
-    shuffled = 2..6
-    |> Enum.random()
-    |> shuffle_n_times(deck)
+    shuffled =
+      2..6
+      |> Enum.random()
+      |> shuffle_n_times(deck)
 
     %{game | deck: shuffled}
   end
@@ -131,9 +132,7 @@ defmodule Cribbex.DiscardPhaseHandler do
 
   defp maybe_flip_card_and_transition(game), do: game
 
-  defp maybe_add_heels_score(
-         %{flip_card: %Card{type: "Jack"}} = game
-       ) do
+  defp maybe_add_heels_score(%{flip_card: %Card{type: "Jack"}} = game) do
     Cribbex.Logic.ScoreAdder.add_points(game, :dealer, 2, "his heels")
   end
 

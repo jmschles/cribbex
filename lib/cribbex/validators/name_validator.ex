@@ -23,6 +23,7 @@ defmodule Cribbex.NameValidator do
     case String.length(name) do
       n when n < 3 or n > 16 ->
         Map.put(result, :error, "Names must be between 3 and 16 characters")
+
       _n ->
         result
     end

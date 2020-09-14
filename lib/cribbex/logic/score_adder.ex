@@ -17,7 +17,12 @@ defmodule Cribbex.Logic.ScoreAdder do
     |> check_win_condition()
   end
 
-  def add_points(%{non_dealer: %{score: score} = non_dealer} = game_data, :non_dealer, points, source) do
+  def add_points(
+        %{non_dealer: %{score: score} = non_dealer} = game_data,
+        :non_dealer,
+        points,
+        source
+      ) do
     %{game_data | non_dealer: %{non_dealer | score: score + points, previous_score: score}}
     |> Notifier.add_notification(:non_dealer, source, points)
     |> check_win_condition()

@@ -70,7 +70,7 @@ defmodule Cribbex.Logic.PegScoring do
     |> Enum.with_index()
     |> Enum.map(fn {value, i} -> (Enum.at(sorted_values, i + 1) || 0) - value end)
     |> Enum.drop(-1)
-    |> Enum.all?(& &1 == 1)
+    |> Enum.all?(&(&1 == 1))
   end
 
   defp remove_last_element(list) do
@@ -96,6 +96,6 @@ defmodule Cribbex.Logic.PegScoring do
          } = game
        ) do
     [:dealer, :non_dealer]
-    |> Enum.find(& Map.get(game, &1).name == played_by)
+    |> Enum.find(&(Map.get(game, &1).name == played_by))
   end
 end
