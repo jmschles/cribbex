@@ -211,6 +211,10 @@ defmodule Cribbex.PeggingPhaseHandler do
     Enum.any?(cards, &valid_play?(game, &1.code))
   end
 
+  # put this here to handle an exception where all cards had been played
+  # and nobody was active, so no function clause matched... yuck
+  defp can_play?(_game), do: true
+
   defp valid_play?(game, card_code) do
     current_count(game) + Card.get_value_by_card_code(card_code) <= 31
   end
