@@ -1,19 +1,14 @@
 # Cribbex
 
-To start your Phoenix server:
+A web cribbage implementation using Phoenix LiveView. [Go play!](https://yellow-precious-xoni.gigalixirapp.com/)
 
-  * Install dependencies with `mix deps.get`
-  * Install Node.js dependencies with `npm install` inside the `assets` directory
-  * Start Phoenix endpoint with `mix phx.server`
+Features:
+- Simple sign-in: just enter a username.
+- Smooth invite -> play -> back to lobby flow. In theory, any number of games can be played simultaneously, but this is unlikely to be tested unless this project really blows up for some reason.
+- Chat, both lobby and game-specific.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+Limitations:
+- Only 2-player games are implemented. This is unlikely to change anytime soon.
+- The CSS is a bare-minimum tangled mess. You will undoubtdly notice some funny things while you play.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Found a bug? Submit an issue!
