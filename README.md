@@ -9,6 +9,7 @@ Features:
 
 Limitations:
 - Only 2-player games are implemented. This is unlikely to change anytime soon.
+- No interactive deck cuts: initial dealer selection and mid-hand deck cut are just random.
 - The CSS is a bare-minimum tangled mess. You will undoubtdly notice some funny things while you play.
 
 Found a bug? Submit an issue!
