@@ -7,6 +7,12 @@ defmodule CribbexWeb.LandingLive do
   #   {:ok, Cribbex.Helpers.discard_phase_test(socket)}
   # end
 
+  def mount(_params, %{"name" => name}, socket) do
+    {:noreply, socket} = CribbexWeb.LoginHandler.handle_login(%{"name" => name}, socket)
+
+    {:ok, socket}
+  end
+
   def mount(_params, _session, socket) do
     {:ok, assign(socket, status: :signin)}
   end

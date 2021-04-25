@@ -72,6 +72,11 @@ defmodule Cribbex.GameSupervisor do
     try_game_find(id, tries)
   end
 
+  def find_game_by_player_name(player_name) do
+    DynamicSupervisor.which_children(__MODULE__)
+    |> IO.inspect()
+  end
+
   # TODO: it'd be slightly (but not much) friendlier to find a way to
   # send players back to the lobby if the game's gone missing
   defp try_game_find(_id, 0), do: raise("Game not found")

@@ -10,7 +10,8 @@ defmodule CribbexWeb.LoginHandler do
         {:noreply,
          socket
          |> put_flash(:error, error)
-         |> assign(:name, name)}
+         |> assign(:name, name)
+         |> assign(:status, :signin)}
     end
   end
 
