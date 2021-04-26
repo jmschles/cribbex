@@ -8,7 +8,6 @@ defmodule Cribbex.GameServer do
   # TODO: implement an idle timeout
 
   def start_link(initial_game_state) do
-    Cribbex.GameSupervisor.find_game_by_player_name("phil")
     registration = {:via, Registry, {Registry.Games, initial_game_state.id}}
     GenServer.start_link(__MODULE__, initial_game_state, name: registration)
   end

@@ -1,6 +1,7 @@
 <section class="lobby-container">
   <section class="lobby-welcome">
     Welcome, <%= @name %>!
+    <a phx-click="logout" phx-hook="SetSession" id="logout">[Logout]</a>
   </section>
   <%= live_component(@socket, CribbexWeb.PlayersComponent, players: @players, name: @name) %>
   <%= live_component(@socket, CribbexWeb.LobbyChatComponent, name: @name, messages: Enum.reverse(@messages)) %>

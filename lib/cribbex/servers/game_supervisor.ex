@@ -73,8 +73,9 @@ defmodule Cribbex.GameSupervisor do
   end
 
   def find_game_by_player_name(player_name) do
-    DynamicSupervisor.which_children(__MODULE__)
-    |> IO.inspect()
+    # require IEx; IEx.pry
+    # DynamicSupervisor.which_children(__MODULE__)
+    # |> IO.inspect()
   end
 
   # TODO: it'd be slightly (but not much) friendlier to find a way to
