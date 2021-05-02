@@ -19,12 +19,19 @@ import {LiveSocket} from "phoenix_live_view"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let Hooks = {}
-Hooks.SetSession = {
+Hooks.LogIn = {
   mounted() {
-    console.log("II HAve EFH")
     this.el.addEventListener("submit", (e) => {
       let inputEl = e.target.elements[0] // there must be a better way
-      fetch(`/api/session?${inputEl.name}=${encodeURIComponent(inputEl.value)}`, { method: "post" })
+      fetch(`/api/login?${inputEl.name}=${encodeURIComponent(inputEl.value)}`, { method: "post" })
+    })
+  }
+}
+
+Hooks.LogOut = {
+  mounted() {
+    this.el.addEventListener("click", (e) => {
+      fetch('/api/logout', { method: "post" })
     })
   }
 }

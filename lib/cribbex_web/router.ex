@@ -18,7 +18,8 @@ defmodule CribbexWeb.Router do
   scope "/api", CribbexWeb do
     pipe_through :api
 
-    post "/session", SessionController, :set
+    post "/login", SessionController, :login
+    post "/logout", SessionController, :logout
   end
 
   scope "/", CribbexWeb do
