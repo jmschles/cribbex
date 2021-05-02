@@ -101,19 +101,19 @@ defmodule CribbexWeb.GameHandler do
     {:noreply, assign(socket, :game_data, %{game_data | game_ending: true})}
   end
 
-  def handle_info(
-        "disconnect",
-        %{name: name},
-        %{assigns: %{game_data: %{id: game_id, game_ending: false} = game_data}} = socket
-      ) do
-    GameSupervisor.kill_game(game_id)
-    Process.send_after(self(), "game:boot_to_lobby", 10000)
+  # def handle_info(
+  #       "disconnect",
+  #       %{name: name},
+  #       %{assigns: %{game_data: %{id: game_id, game_ending: false} = game_data}} = socket
+  #     ) do
+  #   GameSupervisor.kill_game(game_id)
+  #   Process.send_after(self(), "game:boot_to_lobby", 10000)
 
-    {:noreply,
-     socket
-     |> put_flash(:error, "#{name} disconnected, game ending...")
-     |> assign(:game_data, %{game_data | game_ending: true})}
-  end
+  #   {:noreply,
+  #    socket
+  #    |> put_flash(:error, "#{name} disconnected, game ending...")
+  #    |> assign(:game_data, %{game_data | game_ending: true})}
+  # end
 
   def handle_info("disconnect", _payload, socket), do: {:noreply, socket}
 
