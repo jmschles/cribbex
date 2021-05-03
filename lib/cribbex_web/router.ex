@@ -12,6 +12,14 @@ defmodule CribbexWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
+  scope "/api", CribbexWeb do
+    pipe_through :api
+
+    post "/login", SessionController, :login
+    post "/logout", SessionController, :logout
   end
 
   scope "/", CribbexWeb do

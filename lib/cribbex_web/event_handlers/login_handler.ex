@@ -1,4 +1,5 @@
 defmodule CribbexWeb.LoginHandler do
+  alias Cribbex.Helpers
   import Phoenix.LiveView.Utils, only: [put_flash: 3, assign: 3, clear_flash: 1]
 
   def handle_login(%{"name" => name}, socket) do
@@ -10,8 +11,21 @@ defmodule CribbexWeb.LoginHandler do
         {:noreply,
          socket
          |> put_flash(:error, error)
-         |> assign(:name, name)}
+         |> assign(:name, name)
+         |> assign(:status, :signin)}
     end
+  end
+
+  def handle_logout(%{assigns: %{name: name}} = socket) do
+    {:noreply,
+     socket
+     |> Helpers.unsubscribe_from_lobby(name)
+     |> clear_flash()
+     |> assign(:name, nil)
+     |> assign(:messages, [])
+     |> assign(:status, :signin)
+     |> assign(:invitations, [])
+     |> assign(:players, [])}
   end
 
   # helpers

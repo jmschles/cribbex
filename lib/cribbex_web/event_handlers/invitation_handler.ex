@@ -67,7 +67,7 @@ defmodule CribbexWeb.InvitationHandler do
 
   # helpers
 
-  defp game_start_pipeline(socket, %{id: game_id} = game_data) do
+  def game_start_pipeline(socket, %{id: game_id} = game_data) do
     socket
     |> decline_outstanding_invitations()
     |> subscribe_to_game(game_id)

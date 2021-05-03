@@ -7,6 +7,19 @@ defmodule CribbexWeb.LandingLive do
   #   {:ok, Cribbex.Helpers.discard_phase_test(socket)}
   # end
 
+  def mount(_params, %{"name" => name}, socket) do
+    {:noreply, socket} = CribbexWeb.LoginHandler.handle_login(%{"name" => name}, socket)
+
+    case Cribbex.Recovery.recover_game_id_for(name) do
+      nil ->
+        {:ok, socket}
+
+      game_id ->
+        game_data = Cribbex.GameSupervisor.perform_action(:get_game_state, game_id)
+        {:ok, CribbexWeb.InvitationHandler.game_start_pipeline(socket, game_data)}
+    end
+  end
+
   def mount(_params, _session, socket) do
     {:ok, assign(socket, status: :signin)}
   end
@@ -14,6 +27,10 @@ defmodule CribbexWeb.LandingLive do
   @impl true
   def handle_event("login", payload, socket) do
     CribbexWeb.LoginHandler.handle_login(payload, socket)
+  end
+
+  def handle_event("logout", _payload, socket) do
+    CribbexWeb.LoginHandler.handle_logout(socket)
   end
 
   def handle_event("invitation:" <> event, payload, socket) do
